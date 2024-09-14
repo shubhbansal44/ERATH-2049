@@ -19,7 +19,7 @@ class ray_caster:
             cos_a=math.cos(ray_angle)
 
             # horizontals
-            y_hor, dy=(map_y+TILE_DIMENSIONS_Y,TILE_DIMENSIONS_Y) if sin_a>0 else (map_y-1e-6,-TILE_DIMENSIONS_Y)
+            y_hor, dy=(map_y+1,1) if sin_a>0 else (map_y-1e-6,-1)
 
             depth_hor=(y_hor-player_y)/sin_a
             x_hor=player_x+depth_hor*cos_a
@@ -28,14 +28,14 @@ class ray_caster:
             dx=delta_depth*cos_a
 
             for depth in range(MAX_DEPTH):
-                if (int(x_hor//TILE_DIMENSIONS_X),int(y_hor//TILE_DIMENSIONS_Y)) in self.game.map.world_map:
+                if (int(x_hor),int(y_hor)) in self.game.map.world_map:
                     break
                 x_hor+=dx
                 y_hor+=dy
                 depth_hor+=delta_depth
 
             # verticals
-            x_vert, dx=(map_x+TILE_DIMENSIONS_X,TILE_DIMENSIONS_X) if cos_a>0 else (map_x-1e-6,-TILE_DIMENSIONS_X)
+            x_vert, dx=(map_x+1,1) if cos_a>0 else (map_x-1e-6,-1)
 
             depth_vert=(x_vert-player_x)/cos_a
             y_vert=player_y+depth_vert*sin_a
@@ -44,7 +44,7 @@ class ray_caster:
             dy=delta_depth*sin_a
 
             for depth in range(MAX_DEPTH):
-                if (int(x_vert//TILE_DIMENSIONS_X),int(y_vert//TILE_DIMENSIONS_Y)) in self.game.map.world_map:
+                if (int(x_vert),int(y_vert)) in self.game.map.world_map:
                     break
                 x_vert+=dx
                 y_vert+=dy
@@ -57,8 +57,8 @@ class ray_caster:
             pg.draw.line(
                 self.game.SCREEN,
                 'white',
-                (player_x,player_y),
-                (player_x+depth*cos_a,player_y+depth*sin_a),
+                (player_x*TILE_X,player_y*TILE_Y),
+                (player_x*TILE_X+depth*cos_a*TILE_X,player_y*TILE_X+depth*sin_a*TILE_Y),
                 2
             )
 

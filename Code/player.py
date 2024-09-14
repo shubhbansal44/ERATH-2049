@@ -43,37 +43,16 @@ class player:
         return (x,y) not in self.game.map.world_map
     
     def collision_detection(self,dx,dy):
-        if self.check_wall(int((self.x+dx)/TILE_DIMENSIONS_X),int(((self.y)/TILE_DIMENSIONS_Y))):
+        if self.check_wall(int(self.x+dx),int(self.y)):
             self.x+=dx
-        if self.check_wall(int((self.x)/TILE_DIMENSIONS_X),int((self.y+dy)/TILE_DIMENSIONS_Y)):
+        if self.check_wall(int(self.x),int(self.y+dy)):
             self.y+=dy
 
     def draw_player(self):
-        # pg.draw.line(
-        #     self.game.SCREEN,
-        #     (0, 255, 0),
-        #     (self.x, self.y),
-        #     (self.x + WIDTH * math.cos(self.angle), self.y + WIDTH * math.sin(self.angle)),
-        #     2
-        # )
-        # pg.draw.line(
-        #     self.game.SCREEN,
-        #     (0, 255, 0),
-        #     (self.x, self.y),
-        #     (self.x + WIDTH * math.cos(self.angle-H_FOV), self.y + WIDTH * math.sin(self.angle-H_FOV)),
-        #     2
-        # )
-        # pg.draw.line(
-        #     self.game.SCREEN,
-        #     (0, 255, 0),
-        #     (self.x, self.y),
-        #     (self.x + WIDTH * math.cos(self.angle+H_FOV), self.y + WIDTH * math.sin(self.angle+H_FOV)),
-        #     2
-        # )
         pg.draw.circle(
             self.game.SCREEN,
             (255, 0, 0),
-            (self.x,self.y),
+            (self.x*TILE_X,self.y*TILE_Y),
             8
         )
 
@@ -86,5 +65,4 @@ class player:
 
     @property
     def map_pos(self):
-        # return int(self.x//TILE_DIMENSIONS_X), int(self.y//TILE_DIMENSIONS_Y)
         return int(self.x), int(self.y)
