@@ -6,11 +6,11 @@ class RayCaster:
     def __init__(self, game):
         self.game = game
         self.results = []
-        self.objects = []
+        self.walls = []
         self.textures = self.game.object_renderer.wall_textures
 
-    def get_objects(self):
-        self.objects = []
+    def get_walls(self):
+        self.walls = []
         for ray, values in enumerate(self.results):
             depth, projection_height, texture, offset = values
             if projection_height < HEIGHT:
@@ -27,7 +27,7 @@ class RayCaster:
                 wall_column = pg.transform.scale(wall_column, (SCALE, HEIGHT))
                 wall_pos = (ray * SCALE, 0)
 
-            self.objects.append((depth, wall_column, wall_pos))
+            self.walls.append((depth, wall_column, wall_pos))
 
     def cast_rays(self):
         self.results = []
@@ -119,4 +119,4 @@ class RayCaster:
                 
     def update(self):
         self.cast_rays()
-        self.get_objects()
+        self.get_walls()

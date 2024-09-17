@@ -11,6 +11,7 @@ from objects_renderer import *
 class Game:
     def __init__(self):
         pg.init()
+        pg.mouse.set_visible(False)
         self.clock = pg.time.Clock()
         self.SCREEN = pg.display.set_mode(RES)
         self.delta_time = 1
@@ -30,8 +31,8 @@ class Game:
         pg.display.set_caption(f'{self.clock.get_fps():.1f}')
 
     def draw(self):
-        self.SCREEN.fill('black')
-        self.object_renderer.draw_walls()
+        # self.SCREEN.fill('black')
+        self.object_renderer.render()
         # self.map.draw_map()  # Uncomment for map view
         # self.player.draw_player()  # Uncomment for player view
 
