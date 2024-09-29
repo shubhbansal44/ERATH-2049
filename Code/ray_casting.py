@@ -2,15 +2,17 @@ import pygame as pg
 import math
 from settings import *
 
-class RayCaster:
+class Ray_Caster:
     def __init__(self, game):
         self.game = game
         self.results = []
         self.walls = []
-        self.textures = self.game.object_renderer.wall_textures
+        self.objects = []
+        self.textures = self.game.renderer.wall_textures
 
     def get_walls(self):
         self.walls = []
+        self.objects = []
         for ray, values in enumerate(self.results):
             depth, projection_height, texture, offset = values
             if projection_height < HEIGHT:
@@ -36,6 +38,7 @@ class RayCaster:
         player_x, player_y = self.game.player.pos
         map_x, map_y = self.game.player.map_pos
         ray_angle = self.game.player.angle - H_FOV + .0001  # Initial ray angle
+        texture_hor, texture_vert = 1, 1
 
         # Casting rays
         for rays in range(CASTED_RAYS):
@@ -86,14 +89,8 @@ class RayCaster:
                 x_hor %= 1
                 offset = (1 - x_hor) if sin_a > 0 else x_hor
 
-            #  Casting rays for debugging (uncomment for visual debugging)
-            # pg.draw.line(
-            #     self.game.SCREEN,
-            #     'white',
-            #     (player_x * TILE_X, player_y * TILE_Y),
-            #     (player_x * TILE_X + depth * cos_a * TILE_X, player_y * TILE_X + depth * sin_a * TILE_Y),
-            #     2
-            # )
+            #  Casting rays for debugging
+            self.draw_rays(player_x, player_y, cos_a, sin_a, depth)
 
             # Fisheye effect correction
             depth *= math.cos(self.game.player.angle - ray_angle)
@@ -101,21 +98,40 @@ class RayCaster:
             # Calculate wall height based on depth
             projection_height = SCREEN_DEPTH / (depth + .0001)
 
-            # Shadow effect (uncomment to enable shading)
-            # color = [255 / (1 + depth ** 5 * .00002)] * 3
-
-            # 3D (2.5D) wall rendering (uncomment to visualize 3D walls directly)
-            # pg.draw.rect(
-            #     self.game.SCREEN,
-            #     color,
-            #     (rays * SCALE, H_HEIGHT - projection_height // 2, SCALE, projection_height)
-            # )
+            # rendering untextured walls
+            self.untextured_walls(depth, rays, projection_height)
 
             # Store the results for further object rendering
             self.results.append((depth, projection_height, texture, offset))
 
             # Move to the next ray
             ray_angle += DELTA_ANGLE
+
+    def draw_rays(self, player_x, player_y, cos_a, sin_a, depth):
+        if self.game.map.view:
+            pg.draw.line(
+                self.game.SCREEN,
+                'darkgray',
+                ((WIDTH - TILE_X * TILE_DIMENSION_X) + player_x * TILE_DIMENSION_X, player_y * TILE_DIMENSION_Y),
+                ((WIDTH - TILE_X * TILE_DIMENSION_X) + player_x * TILE_DIMENSION_X + depth * cos_a * TILE_DIMENSION_X, player_y * TILE_DIMENSION_X + depth * sin_a * TILE_DIMENSION_Y),
+                2
+            )
+
+    def untextured_walls(self, depth, rays, projection_height):
+        key = pg.key.get_pressed()
+        if key[pg.K_x]:
+            # Shadow effect (uncomment to enable shading)
+            color = [255 / (1 + depth ** 5 * .00002)] * 3
+
+            # 3D (2.5D) wall rendering (uncomment to visualize 3D walls directly)
+            pg.draw.rect(
+                self.game.SCREEN,
+                color,
+                (rays * SCALE, H_HEIGHT - projection_height // 2, SCALE, projection_height)
+            )
+            self.game.renderer.render_objects()
+            self.game.renderer.render_health()
+            self.game.weapon.draw()
                 
     def update(self):
         self.cast_rays()

@@ -7,6 +7,43 @@ class Player:
         self.game = game
         self.x, self.y = PLAYER_POS
         self.angle = PLAYER_ANGLE
+        self.fired = False
+        self.health = MAX_HEALTH
+        self.min_health = (MAX_HEALTH / 100) * 15 # 15%
+        self.rel = 0
+        self.supplements = (MAX_HEALTH / 100) * .01 # .01%
+        self.view = False
+
+    def in_view(self):
+        key = pg.key.get_just_pressed()
+        if (key[pg.K_h] and not self.view) or self.health <= self.min_health:
+            self.view = True
+        elif key[pg.K_h]:
+            self.view = False
+
+    def regenerate(self):
+        if self.health < MAX_HEALTH:
+            self.health += self.supplements
+
+    def get_murdered(self):
+        if self.health < 1:
+            self.game.renderer.death()
+            self.game.demolish()
+            self.game.wasted = True
+            pg.display.update()
+
+    def get_hurt(self, damage):
+        self.health -= damage
+        self.game.renderer.blood()
+        # self.game.sound.player_pain.play()
+        self.get_murdered()
+
+    def fire_event(self, event):
+        if event.type == pg.MOUSEBUTTONDOWN:
+            if event.button == 1 and not self.fired and not self.game.weapon.reloading:
+                self.game.sound.shotgun_fire.play()
+                self.fired = True
+                self.game.weapon.reloading = True
 
     def movement(self):
         sin_a = math.sin(self.angle)
@@ -43,17 +80,18 @@ class Player:
         return (x, y) not in self.game.map.world_map
     
     def collision_detection(self, dx, dy):
-        if self.check_wall(int(self.x + dx), int(self.y)):
+        scale = PLAYER_SCALE / self.game.delta_time
+        if self.check_wall(int(self.x + dx * scale), int(self.y)):
             self.x += dx
-        if self.check_wall(int(self.x), int(self.y + dy)):
+        if self.check_wall(int(self.x), int(self.y + dy * scale)):
             self.y += dy
 
-    def draw_player(self):
+    def draw(self):
         pg.draw.circle(
             self.game.SCREEN,
-            (255, 0, 0),
-            (self.x * TILE_X, self.y * TILE_Y),
-            8
+            'blue',
+            ((WIDTH - TILE_X * TILE_DIMENSION_X) + self.x * TILE_DIMENSION_X, self.y * TILE_DIMENSION_Y),
+            4
         )
 
     def mouse_control(self):
@@ -67,6 +105,8 @@ class Player:
     def update(self):
         self.movement()
         self.mouse_control()
+        self.regenerate()
+        self.in_view()
 
     @property
     def pos(self):
