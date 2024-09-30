@@ -9,6 +9,7 @@ class Ray_Caster:
         self.walls = []
         self.objects = []
         self.textures = self.game.renderer.wall_textures
+        self.stats_view = False
 
     def get_walls(self):
         self.walls = []
@@ -132,7 +133,15 @@ class Ray_Caster:
             self.game.renderer.render_objects()
             self.game.renderer.render_health()
             self.game.weapon.draw()
+
+    def stats(self):
+        key = pg.key.get_just_pressed()
+        if key[pg.K_g] and not self.stats_view:
+            self.stats_view = True
+        elif key[pg.K_g]:
+            self.stats_view = False
                 
     def update(self):
         self.cast_rays()
         self.get_walls()
+        self.stats()

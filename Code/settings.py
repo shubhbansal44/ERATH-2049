@@ -12,7 +12,7 @@ RES = WIDTH, HEIGHT = INFO.current_w, INFO.current_h
 H_WIDTH = WIDTH // 2
 H_HEIGHT = HEIGHT // 2
 # RES = 1536, 864
-FPS = 60
+MAX_FPS = 60
 
 # MAP SETTINGS
 TILE_X = 32
@@ -50,4 +50,4 @@ SCALE = WIDTH // CASTED_RAYS  # Width of each ray slice on screen
 TEXTURE_SIZE = 256  # Texture resolution
 H_TEXTURE_SIZE = TEXTURE_SIZE // 2  # Half of the texture resolution
 FLOOR = (30, 30, 30)
-DIGIT_SIZE = 90
+DIGIT_SIZE = 60

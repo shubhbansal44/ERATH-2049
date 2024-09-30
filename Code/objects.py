@@ -54,8 +54,7 @@ class Static_Objects:
 
 
 class Animated_Objects(Static_Objects):
-    def __init__(self, game, path=os.path.join('Sources', 'objects', 'fire1', 'tile000.png'), 
-                 pos=(1.05, 1.05), scale=0.3, shift=0.1, animation_time=40):
+    def __init__(self, game, path=os.path.join('Sources', 'objects', 'fire1', 'tile000.png'), pos=(1.05, 1.05), scale=0.3, shift=0.1, animation_time=40):
         super().__init__(game, path, pos, scale, shift)
         self.animation_time = animation_time
         self.path = path.rsplit('\\', 1)[0]

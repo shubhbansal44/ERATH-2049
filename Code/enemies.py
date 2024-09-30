@@ -1,6 +1,6 @@
 from objects import *
 from os.path import join
-from random import randint, random, choice
+from random import randint, random
 
 
 class Enemy(Animated_Objects):
@@ -11,7 +11,6 @@ class Enemy(Animated_Objects):
         self.idle_frames = self.get_frames(join(self.path, 'idle'))
         self.pain_frames = self.get_frames(join(self.path, 'pain'))
         self.walk_frames = self.get_frames(join(self.path, 'walk'))
-
         self.attack_dist = randint(2,3)
         self.speed = .04
         self.size = 30
@@ -23,11 +22,36 @@ class Enemy(Animated_Objects):
         self.sight = False
         self.appetite = False
         self.death_progress = 0
+        self.deletion_delay = 2000
+        self.deleted = False
+        self.time_prev = pg.time.get_ticks()
+        self.view = False
 
     def update(self):
-        self.check_animation()
+        self.in_view()
+        self.draw_sight()
         self.get_objects()
         self.enemy_logic()
+        if not self.alive:
+            if not self.deleted:
+                self.get_murdered()
+            else:
+                self.dlt()
+        else:
+            self.check_animation()
+
+    def in_view(self):
+        key = pg.key.get_just_pressed()
+        if key[pg.K_m] and not self.view:
+            self.view = True
+        elif key[pg.K_m]:
+            self.view = False
+
+    def get_murdered(self):
+        time_now = pg.time.get_ticks()
+        if time_now - self.time_prev > self.deletion_delay:
+            self.time_prev = time_now
+            self.deleted = True
 
     def get_shot(self):
         if self.sight and self.game.player.fired:
@@ -173,18 +197,18 @@ class Enemy(Animated_Objects):
         return False
     
     def draw_sight(self):
-        if self.alive:
+        if (self.alive or not self.deleted) and self.view:
             pg.draw.circle(
                 self.game.SCREEN,
                 'red',
-                (self.x * TILE_DIMENSION_X, self.y * TILE_DIMENSION_Y),
+                ((WIDTH - TILE_X * TILE_DIMENSION_X) + self.x * TILE_DIMENSION_X, self.y * TILE_DIMENSION_Y),
                 4
             )
             if self.in_sight():
                 pg.draw.line(
                     self.game.SCREEN,
                     'yellow',
-                    (self.game.player.x * TILE_DIMENSION_X, self.game.player.y * TILE_DIMENSION_Y),
-                    (self.x * TILE_DIMENSION_X, self.y * TILE_DIMENSION_Y),
+                    ((WIDTH - TILE_X * TILE_DIMENSION_X) + self.game.player.x * TILE_DIMENSION_X, self.game.player.y * TILE_DIMENSION_Y),
+                    ((WIDTH - TILE_X * TILE_DIMENSION_X) + self.x * TILE_DIMENSION_X, self.y * TILE_DIMENSION_Y),
                     1
                 )

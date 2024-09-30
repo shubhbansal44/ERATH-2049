@@ -7,8 +7,13 @@ class Renderer:
     def __init__(self, game):
         self.game = game
         self.screen = game.SCREEN
+        # self.base_path = os.path.dirname(os.path.abspath(__file__)).rsplit('\\', 1)[0]
         self.wall_textures = self.load_wall_textures()
-        self.sky = self.get_texture(join('Sources', 'sky', '1.png'), (WIDTH, H_HEIGHT))
+        self.sky_images = [self.get_texture(join('Sources', 'sky', f'{i}.png'), (WIDTH, H_HEIGHT)) for i in range(1,6)]
+        self.sky = 0
+        self.pass_time = False
+        self.duration = 720000
+        self.time_prev = pg.time.get_ticks()
         # self.floor = self.get_texture(join('Sources', 'floors', '1.png'), (WIDTH, H_HEIGHT))
         self.blood_screen = self.get_texture(join('Sources', 'effects', 'blood', 'blood.png'), RES)
         self.death_screen = self.get_texture(join('Sources', 'effects', 'death', 'death.webp'), RES)
@@ -31,14 +36,28 @@ class Renderer:
         if self.game.player.view:
             health = str(int((self.game.player.health / MAX_HEALTH) * 100))
             for i, char in enumerate(health):
-                self.screen.blit(self.digits[char], (i * DIGIT_SIZE, 0))
-            self.screen.blit(self.digits['10'], ((i + 1) * DIGIT_SIZE, 0))
+                self.screen.blit(self.digits[char], (10 + i * DIGIT_SIZE, 10))
+            self.screen.blit(self.digits['10'], (10 + (i + 1) * DIGIT_SIZE, 10))
 
     def render_sky(self):
+        self.time()
+        self.sky = self.current_sky()
         self.sky_offset = (self.game.player.angle / math.tau * WIDTH) % WIDTH
         # self.sky_offset = (self.sky_offset + 4.0 * self.game.player.rel) % WIDTH
-        self.screen.blit(self.sky, (-self.sky_offset, 0))
-        self.screen.blit(self.sky, (-self.sky_offset + WIDTH, 0))
+        self.screen.blit(self.sky_images[self.sky], (-self.sky_offset, 0))
+        self.screen.blit(self.sky_images[self.sky], (-self.sky_offset + WIDTH, 0))
+
+    def time(self):
+        time_now = pg.time.get_ticks()
+        if (time_now - self.time_prev > self.duration) and not self.pass_time:
+            self.time_prev = time_now
+            self.pass_time = True
+
+    def current_sky(self):
+        if self.pass_time:
+            self.pass_time = False
+            return int((self.sky + 1) % len(self.sky_images))
+        return self.sky
 
     def render_floor(self):
         pg.draw.rect(
