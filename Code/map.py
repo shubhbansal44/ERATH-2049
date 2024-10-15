@@ -1,6 +1,7 @@
 # imports
 import pygame as pg
-from settings import *
+from settings import SCREEN_SETTINGS, MAP_SETTINGS
+
 
 mini_map = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -39,21 +40,29 @@ mini_map = [
 ]
 
 
-class Game_Map:
+class Game_Map():
     def __init__(self, game):
+        self.settings()
         self.game = game
         self.mini_map = mini_map
         self.world_map = {}
         self.get_map()
         self.view = False
+        self.rows, self.cols = len(mini_map), len(mini_map[0])
+        self.m_pressed = False
+
+    def settings(self):
+        self.screen_settings = SCREEN_SETTINGS()
+        self.map_settings = MAP_SETTINGS()
 
     def in_view(self):
-        key = pg.key.get_just_pressed()
-        if key[pg.K_m] and not self.view:
-            self.view = True
-        elif key[pg.K_m]:
-            self.view = False
-    
+        key = pg.key.get_pressed()
+        if key[pg.K_m] and not self.m_pressed:
+            self.view = not self.view
+            self.m_pressed = True
+        if not key[pg.K_m]:
+            self.m_pressed = False
+
     def get_map(self):
         for i, row in enumerate(self.mini_map):
             for j, value in enumerate(row):
@@ -61,12 +70,12 @@ class Game_Map:
                     self.world_map[(j, i)] = value
 
     def draw(self):
-        for pos in self.world_map:
-            pg.draw.rect(
-                self.game.SCREEN,
-                'black',
-                ((WIDTH - TILE_X * TILE_DIMENSION_X) + pos[0] * TILE_DIMENSION_X, pos[1] * TILE_DIMENSION_Y, TILE_DIMENSION_X, TILE_DIMENSION_Y)
-            )
+        if self.view and not self.game.x_mode:
+            for pos in self.world_map:
+                pg.draw.rect(
+                    self.game.SCREEN,
+                    'black',
+                    ((self.screen_settings.WIDTH - self.map_settings.TILE_X * self.map_settings.TILE_DIMENSION_X) + pos[0] * self.map_settings.TILE_DIMENSION_X, pos[1] * self.map_settings.TILE_DIMENSION_Y, self.map_settings.TILE_DIMENSION_X, self.map_settings.TILE_DIMENSION_Y))
 
     def update(self):
         self.in_view()

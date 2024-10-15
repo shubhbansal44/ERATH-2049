@@ -1,17 +1,19 @@
 from objects import *
 from os.path import join
 from random import randint, random
+from settings import MAP_SETTINGS
 
 
 class Enemy(Animated_Objects):
     def __init__(self, game, path=join('sources', 'enemies', 'soldier', '0.png'), pos=(1.5, 1.5), scale=0.7, shift=0.4, animation_time=250):
         super().__init__(game, path, pos, scale, shift, animation_time)
+        self.settings()
         self.attack_frames = self.get_frames(join(self.path, 'attack'))
         self.death_frames = self.get_frames(join(self.path, 'death'))
         self.idle_frames = self.get_frames(join(self.path, 'idle'))
         self.pain_frames = self.get_frames(join(self.path, 'pain'))
         self.walk_frames = self.get_frames(join(self.path, 'walk'))
-        self.attack_dist = randint(2,3)
+        self.attack_dist = randint(2,4)
         self.speed = .04
         self.size = 30
         self.health = 150
@@ -26,6 +28,11 @@ class Enemy(Animated_Objects):
         self.deleted = False
         self.time_prev = pg.time.get_ticks()
         self.view = False
+        self.m_pressed = False
+
+    def settings(self):
+        self.render_settings = RENDER_SETTINGS()
+        self.map_settings = MAP_SETTINGS()
 
     def update(self):
         self.in_view()
@@ -37,15 +44,17 @@ class Enemy(Animated_Objects):
                 self.get_murdered()
             else:
                 self.dlt()
+                # pass
         else:
             self.check_animation()
 
     def in_view(self):
-        key = pg.key.get_just_pressed()
-        if key[pg.K_m] and not self.view:
-            self.view = True
-        elif key[pg.K_m]:
-            self.view = False
+        key = pg.key.get_pressed()
+        if key[pg.K_m] and not self.m_pressed:
+            self.view = not self.view
+            self.m_pressed = True
+        if not key[pg.K_m]:
+            self.m_pressed = False
 
     def get_murdered(self):
         time_now = pg.time.get_ticks()
@@ -55,7 +64,7 @@ class Enemy(Animated_Objects):
 
     def get_shot(self):
         if self.sight and self.game.player.fired:
-            if H_WIDTH - self.object_h_width < self.screen_x < H_WIDTH + self.object_h_width:
+            if self.render_settings.H_WIDTH - self.object_h_width < self.screen_x < self.render_settings.H_WIDTH + self.object_h_width:
                 self.game.sound.pain.play()
                 self.game.player.fired = False
                 self.pain = True
@@ -147,8 +156,8 @@ class Enemy(Animated_Objects):
         ray_angle = self.theta
 
         # Casting ray
-        sin_a = math.sin(ray_angle)
-        cos_a = math.cos(ray_angle)
+        sin_a = math.sin(ray_angle) + .0001
+        cos_a = math.cos(ray_angle) + .0001
 
         # Horizontal depth
         y_hor, dy = (map_y + 1, 1) if sin_a > 0 else (map_y - 1e-6, -1)
@@ -158,7 +167,7 @@ class Enemy(Animated_Objects):
         dx = delta_depth * cos_a
 
         # Horizontal wall collision detection
-        for depth in range(MAX_DEPTH):
+        for depth in range(self.render_settings.MAX_DEPTH):
             tile_hor = (int(x_hor), int(y_hor))
             if tile_hor == self.map_pos:
                 player_dist_h = depth_hor
@@ -178,7 +187,7 @@ class Enemy(Animated_Objects):
         dy = delta_depth * sin_a
 
         # Vertical wall collision detection
-        for depth in range(MAX_DEPTH):
+        for depth in range(self.render_settings.MAX_DEPTH):
             tile_vert = (int(x_vert), int(y_vert))
             if tile_vert == self.map_pos:
                 player_dist_v = depth_vert
@@ -197,18 +206,64 @@ class Enemy(Animated_Objects):
         return False
     
     def draw_sight(self):
-        if (self.alive or not self.deleted) and self.view:
+        if ((self.alive or not self.deleted) and self.view) and not self.game.wasted and not self.game.x_mode:
             pg.draw.circle(
                 self.game.SCREEN,
                 'red',
-                ((WIDTH - TILE_X * TILE_DIMENSION_X) + self.x * TILE_DIMENSION_X, self.y * TILE_DIMENSION_Y),
+                ((self.render_settings.WIDTH - self.map_settings.TILE_X * self.map_settings.TILE_DIMENSION_X) + self.x * self.map_settings.TILE_DIMENSION_X, self.y * self.map_settings.TILE_DIMENSION_Y),
                 4
             )
-            if self.in_sight():
+            if self.sight:
                 pg.draw.line(
                     self.game.SCREEN,
                     'yellow',
-                    ((WIDTH - TILE_X * TILE_DIMENSION_X) + self.game.player.x * TILE_DIMENSION_X, self.game.player.y * TILE_DIMENSION_Y),
-                    ((WIDTH - TILE_X * TILE_DIMENSION_X) + self.x * TILE_DIMENSION_X, self.y * TILE_DIMENSION_Y),
+                    ((self.render_settings.WIDTH - self.map_settings.TILE_X * self.map_settings.TILE_DIMENSION_X) + self.game.player.x * self.map_settings.TILE_DIMENSION_X, self.game.player.y * self.map_settings.TILE_DIMENSION_Y),
+                    ((self.render_settings.WIDTH - self.map_settings.TILE_X * self.map_settings.TILE_DIMENSION_X) + self.x * self.map_settings.TILE_DIMENSION_X, self.y * self.map_settings.TILE_DIMENSION_Y),
                     1
                 )
+
+
+class Soldier(Enemy):
+    def __init__(self, game, path=join('sources', 'enemies', 'soldier', '0.png'), pos=(1.5, 1.5), scale=0.6, shift=0.4, animation_time=250):
+        super().__init__(game, path, pos, scale, shift, animation_time)
+
+
+class Octobrain(Enemy):
+    def __init__(self, game, path=join('sources', 'enemies', 'octobrain', '0.png'), pos=(9.5, 18.5), scale=0.7, shift=0.1, animation_time=220):
+        super().__init__(game, path, pos, scale, shift, animation_time)
+        self.attack_dist = 1
+        self.speed = .05
+        self.health = 100
+        self.damage = 7
+        self.accuracy = .25
+        self.size = 15
+
+
+class Chaos_serpent(Enemy):
+    def __init__(self, game, path=join('sources', 'enemies', 'chaos_serpent', '0.png'), pos=(7.5, 31.5), scale=0.7, shift=0.4, animation_time=250):
+        super().__init__(game, path, pos, scale, shift, animation_time)
+        self.attack_dist = 2
+        self.speed = .03
+        self.health = 150
+        self.damage = 10
+        self.accuracy = .2
+
+
+class Cyber_demon(Enemy):
+    def __init__(self, game, path=join('sources', 'enemies', 'cyber_demon', '0.png'), pos=(7.5, 31.5), scale=1.1, shift=0.3, animation_time=250):
+        super().__init__(game, path, pos, scale, shift, animation_time)
+        self.attack_dist = 2
+        self.speed = .03
+        self.health = 250
+        self.damage = 15
+        self.accuracy = .2
+
+
+class Cerberus(Enemy):
+    def __init__(self, game, path=join('sources', 'enemies', 'cerberus', '0.png'), pos=(7.5, 31.5), scale=0.6, shift=0.4, animation_time=220):
+        super().__init__(game, path, pos, scale, shift, animation_time)
+        self.attack_dist = 1
+        self.speed = .04
+        self.health = 170
+        self.damage = 12
+        self.accuracy = .25

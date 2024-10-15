@@ -1,0 +1,1 @@
+{"width": 1920, "height": 1080, "player_speed": 0.004, "player_rot_speed": 0.002, "mouse_sensitivity": 0.0004, "res1": "#486a47", "res2": "#475F77", "res3": "#475F77"}

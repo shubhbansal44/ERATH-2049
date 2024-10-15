@@ -1,9 +1,7 @@
 # IMPORTS
 import pygame as pg
 import sys
-# import psutil as cpu
-# import GPUtil as gpu
-from settings import *
+from settings import SCREEN_SETTINGS
 from player import *
 from map import *
 from ray_casting import *
@@ -12,71 +10,77 @@ from objects_handler import *
 from weapons import *
 from sounds import *
 from pathfinding import *
+from stats import *
+from menu import *
 
 
-class Game:
+class Game():
     def __init__(self):
-        pg.init()
-        pg.mouse.set_visible(False)
-        self.clock = pg.time.Clock()
-        self.SCREEN = pg.display.set_mode(RES, pg.RESIZABLE)
-        self.delta_time = 1
+        self.settings()
+        pg.mouse.set_visible(True)
+        self.SCREEN = pg.display.set_mode(self.screen_settings.RES, pg.RESIZABLE)
         self.global_flag = False
         self.global_event = pg.USEREVENT + 0
-        pg.time.set_timer(self.global_event, 80)
-        self.new_game()
+        pg.time.set_timer(self.global_event, 100)
         self.wasted = False
-        self.stats_screen = pg.Surface((350, 200))
-        self.stats_screen.fill((0, 0, 0))
-        self.stats_screen.set_alpha(100)
+        self.win = False
+        self.x_mode = False
+        self.start = False
+        self.game = False
+        self.menu = Menu(self)
 
+    def settings(self):
+        self.screen_settings = SCREEN_SETTINGS()
+        
     def new_game(self):
+        pg.mouse.set_visible(False)
+        self.wasted = False
+        self.win = False
         self.map = Game_Map(self)
-        self.player = Player(self)
         self.renderer = Renderer(self)
+        self.player = Player(self)
         self.raycast = Ray_Caster(self)
         self.objects_handler = Object_Handler(self)
         self.weapon = Weapons(self)
         self.sound = Sounds(self)
         self.path_finder = Path_Finder(self)
-        self.wasted = False
+        self.stats = Stats(self)
         pg.display.set_caption('ERATH-2049')
 
     def update(self):
-        if not self.wasted:
+        if self.game:
             self.player.update()
             self.raycast.update()
             self.objects_handler.update()
             self.weapon.update()
             self.map.update()
+            self.stats.update()
             pg.display.update()
-            self.delta_time = self.clock.tick(MAX_FPS)
+        if self.menu.main_menu:
+            self.menu.update()
 
     def draw(self):
-        self.draw_3D()
-        self.draw_2D()
-        self.draw_stats()
+        if self.game:
+            self.draw_3D()
+            self.draw_2D()
+            self.draw_stats()
+        elif self.wasted and not self.menu.main_menu:
+            self.renderer.death()
+        else:
+            self.menu.draw()
 
     def draw_3D(self):
-        if not self.wasted:
-            self.renderer.render()  # 3D view
+        self.renderer.render()  # 3D view
+        if not self.x_mode:
             self.weapon.draw()  # first person weapon view
 
     def draw_2D(self):
-        if not self.wasted and self.map.view:
-            self.map.draw()  # map view
-            self.player.draw()  # player view
+        self.map.draw()  # map view
+        self.player.draw()  # player view
+        self.player.draw_health()
 
     def draw_stats(self):
-        if not self.wasted and self.raycast.stats_view:
-            self.SCREEN.blit(self.stats_screen, (10, 10))
-            FONT = pg.font.SysFont('', 30)
-            LIVE_FPS = f'FPS: {self.clock.get_fps():.1f}'
-            GAME_FPS = FONT.render(LIVE_FPS, True, (255, 2, 255))
-            LIVE_SCREEN = f'SCREEN SIZE: {WIDTH} * {HEIGHT}'
-            GAME_SCREEN = FONT.render(LIVE_SCREEN, True, (255, 2, 255))
-            self.SCREEN.blit(GAME_FPS, (25, 25))
-            self.SCREEN.blit(GAME_SCREEN, (25, 60))
+        self.stats.draw()
 
     def events(self):
         self.global_flag = False
@@ -84,11 +88,23 @@ class Game:
             if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
                 pg.quit()
                 sys.exit(0)
-            elif event.type == self.global_event:
-                self.global_flag  = True
-            elif self.wasted and event.type == pg.KEYDOWN and event.key == pg.K_e:
-                self.new_game()
-            self.player.fire_event(event)
+            if event.type == pg.KEYDOWN and event.key == pg.K_SPACE and not self.menu.pause and self.start:
+                    if self.game or self.menu.menu or self.wasted or self.win:
+                        self.menu.toggle_menu()
+                        pg.mouse.set_visible(False)
+                        if self.menu.main_menu:
+                            pg.mouse.set_visible(True)
+                            self.renderer.death_blit = self.renderer.win_blit = False
+            if event.type == pg.KEYDOWN and event.key == pg.K_p and not self.menu.main_menu and not self.wasted:
+                self.menu.toggle_pause()
+            if (event.type == pg.KEYDOWN and event.key == pg.K_n):
+                if self.wasted or self.menu.menu or self.win:
+                    self.menu.menu = self.menu.main_menu = False
+                    self.start = True
+                    self.game = True
+                    self.new_game()
+            if not self.menu.pause and not self.menu.main_menu and event.type == self.global_event:
+                self.global_flag = True
 
     def demolish(self):
         [object.dlt() for object in self.objects_handler.objects]

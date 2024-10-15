@@ -1,0 +1,49 @@
+Erath-2049
+
+Credits
+
+Developers
+Lead Developer: Shubh Bansal
+Programmers: Shubh Bansal, Shubh Bansal
+AI Developer: Shubh Bansal
+Gameplay Programmer: Shubh Bansal
+
+Design Team
+Lead Designer: Shubh Bansal
+Level Design: Shubh Bansal
+UI/UX Design: Shubh Bansal
+Art Director: Shubh Bansal
+
+Artists
+Lead Artist: Shubh Bansal
+Concept Artists: Shubh Bansal, Shubh Bansal
+3D Modelers: Shubh Bansal, Shubh Bansal
+Texture Artists: Shubh Bansal
+Animation: Shubh Bansal
+
+Sound & Music
+Composer: Shubh Bansal
+Sound Design: Shubh Bansal
+Voice Acting: Shubh Bansal, Shubh Bansal
+
+Testing
+Lead Tester: Shubh Bansal
+Quality Assurance: Shubh Bansal, Shubh Bansal
+Beta Testers: Shubh Bansal, Shubh Bansal
+
+Special Thanks
+Shubh Bansal, Shubh Bansal
+Hister
+ASH Group
+
+Tools & Technology
+Engine: Raycasting Engine, DDA Algorithm
+Graphics: 2D
+Audio: ASH Waves
+Additional Tools: Python, Pygame
+
+Published By
+Shubh Bansal
+
+Copyright
+Erath-2049 © 2024 by ASH Graphixs. All rights reserved.
