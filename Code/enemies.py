@@ -1,7 +1,7 @@
 from objects import *
 from os.path import join
 from random import randint, random
-from settings import MAP_SETTINGS
+# from settings import MAP_SETTINGS
 
 
 class Enemy(Animated_Objects):
@@ -32,8 +32,8 @@ class Enemy(Animated_Objects):
         self.id = id
 
     def settings(self):
-        self.render_settings = RENDER_SETTINGS()
-        self.map_settings = MAP_SETTINGS()
+        self.render_settings = self.game.render_settings
+        self.map_settings = self.game.map_settings
 
     def update(self):
         self.in_view()

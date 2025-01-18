@@ -1,13 +1,13 @@
 import pygame as pg
-from settings import PLAYER_SETTINGS, MAP_SETTINGS, CONTROL_SETTINGS, TEXTURE_SETTINGS
+# from settings import PLAYER_SETTINGS, MAP_SETTINGS, CONTROL_SETTINGS, TEXTURE_SETTINGS
 import math
 from os.path import join
 
 
 class Player():
     def __init__(self, game):
-        self.settings()
         self.game = game
+        self.settings()
         self.x, self.y = self.player_settings.PLAYER_POS
         self.angle = self.player_settings.PLAYER_ANGLE
         self.fired = False
@@ -21,10 +21,10 @@ class Player():
         self.h_pressed = False
 
     def settings(self):
-        self.player_settings = PLAYER_SETTINGS()
-        self.map_settings = MAP_SETTINGS()
-        self.control_settings = CONTROL_SETTINGS()
-        self.texture_settings = TEXTURE_SETTINGS()
+        self.player_settings = self.game.player_settings
+        self.map_settings = self.game.map_settings
+        self.control_settings = self.game.control_settings
+        self.texture_settings = self.game.texture_settings
 
     def in_view(self):
         key = pg.key.get_pressed()

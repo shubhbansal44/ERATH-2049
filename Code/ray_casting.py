@@ -1,11 +1,11 @@
 import pygame as pg
 import math
-from settings import RENDER_SETTINGS, TEXTURE_SETTINGS, MAP_SETTINGS
+# from settings import RENDER_SETTINGS, TEXTURE_SETTINGS, MAP_SETTINGS
 
 class Ray_Caster():
     def __init__(self, game):
-        self.settings()
         self.game = game
+        self.settings()
         self.results = []
         self.walls = []
         self.objects = []
@@ -13,9 +13,9 @@ class Ray_Caster():
         self.textures = self.game.renderer.wall_textures
 
     def settings(self):
-        self.render_settings = RENDER_SETTINGS()
-        self.texture_settings = TEXTURE_SETTINGS()
-        self.map_settings = MAP_SETTINGS()
+        self.render_settings = self.game.render_settings
+        self.texture_settings = self.game.texture_settings
+        self.map_settings = self.game.map_settings
 
     def get_walls(self):
         self.walls = []

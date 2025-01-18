@@ -2,13 +2,13 @@ import pygame as pg
 import os
 from collections import deque
 import math
-from settings import RENDER_SETTINGS
+# from settings import RENDER_SETTINGS
 
 
 class Static_Objects():
     def __init__(self, game, path=os.path.join('Sources', 'objects', 'stand', 'LampStand.png'), pos=(1.1, 1.1), scale=0.7, shift=0.50):
-        self.settings()
         self.game = game
+        self.settings()
         self.player = game.player
         self.x, self.y = pos
         self.id = path.rsplit('\\')[1]
@@ -21,7 +21,7 @@ class Static_Objects():
         self.height_shift = shift
 
     def settings(self):
-        self.render_settings = RENDER_SETTINGS()
+        self.render_settings = self.game.render_settings
 
     def dlt(self):
         self.alive = False

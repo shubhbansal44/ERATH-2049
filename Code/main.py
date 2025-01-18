@@ -1,7 +1,7 @@
 # IMPORTS
 import pygame as pg
 import sys
-from settings import SCREEN_SETTINGS
+from settings import SCREEN_SETTINGS, CONTROL_SETTINGS, MAP_SETTINGS, PLAYER_SETTINGS, RENDER_SETTINGS, VIEWPORT_SETTINGS, TEXTURE_SETTINGS
 from player import *
 from map import *
 from ray_casting import *
@@ -12,7 +12,7 @@ from sounds import *
 from pathfinding import *
 from stats import *
 from menu import *
-from parser import *
+# from parser import *
 
 
 class Game():
@@ -33,6 +33,12 @@ class Game():
 
     def settings(self):
         self.screen_settings = SCREEN_SETTINGS()
+        self.control_settings = CONTROL_SETTINGS()
+        self.map_settings = MAP_SETTINGS()
+        self.player_settings = PLAYER_SETTINGS()
+        self.render_settings = RENDER_SETTINGS()
+        self.viewport_settings = VIEWPORT_SETTINGS()
+        self.texture_settings = TEXTURE_SETTINGS()
         self.parser = self.screen_settings.parser
         
     def new_game(self):

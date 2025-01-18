@@ -64,5 +64,5 @@ class Parser:
         return credits_text
     
     def parse_attr(self, attribute):
-        print(self.data)
+        # print(self.data)
         return self.data[attribute]

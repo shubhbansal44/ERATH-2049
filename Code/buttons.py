@@ -1,6 +1,8 @@
+import json
 import pygame as pg
 import sys
-from settings import *
+from os.path import join
+# from settings import *
 
 
 class Static_Button():
@@ -186,6 +188,7 @@ class Resolution(Static_Button):
             self.game.menu.saved_settings['id'] = self.id
             self.flashed = False
             self.flash_res_screen()
+            # print("res", self.parser.data)
             self.active = False
 
     def flash_res_screen(self):
@@ -201,19 +204,22 @@ class Resolution(Static_Button):
 class Save_Settings(Static_Button):
     def __init__(self, game, text='Save Settings', width=200, height=40, pos=(0, 0), btn_color_1='#475F77', btn_color_2='#354B5E', btn_color_3='#D74B4B', font='Arial', font_size=1, font_color='#FFFFFF', dynamic_elevation=6, static_elevation=0, border_radius=12):
         super().__init__(game, text, width, height, pos, btn_color_1, btn_color_2, btn_color_3, font, font_size, font_color, dynamic_elevation, static_elevation, border_radius)
-        self.control_settings = CONTROL_SETTINGS()
-        self.player_settings = PLAYER_SETTINGS()
-        self.screen_settings = SCREEN_SETTINGS()
-        self.viewport_settings = VIEWPORT_SETTINGS()
-        self.render_settings = RENDER_SETTINGS()
+        self.control_settings = self.game.control_settings
+        self.player_settings = self.game.player_settings
+        self.screen_settings = self.game.screen_settings
+        self.viewport_settings = self.game.viewport_settings
+        self.render_settings = self.game.render_settings
+        self.map_settings = self.game.map_settings
+        self.texture_settings = self.game.texture_settings
 
     def function(self):
         if self.active:
+            # print(self.parser.data, self.game.parser.data, self.screen_settings.parser.data, self.game.menu.saved_settings)
             with open(join('Code', 'saved_settings.txt'), 'w') as settings:
                 json.dump(self.game.menu.saved_settings, settings)
-            print(self.parser.data)
-            self.parser.update()
-            print(self.parser.data)
+            # print("btn", self.parser.data)
+            # self.parser.update()
+            # print(self.parser.data)
             self.game.SCREEN = pg.display.set_mode((self.parser.parse_attr('width'), self.parser.parse_attr('height')))
             self.game.menu.pause_screen = pg.Surface((self.parser.parse_attr('width'), self.parser.parse_attr('height')), pg.SRCALPHA)
             self.game.menu.pause_screen.fill((0, 0, 0, 128))
@@ -227,17 +233,21 @@ class Save_Settings(Static_Button):
             self.control_settings.update()
             self.viewport_settings.update()
             self.render_settings.update()
+            self.map_settings.update()
+            self.texture_settings.update()
             self.game.menu.credits_text = self.parser.parse_credits(join('Code', 'credits.txt'))
             self.game.menu.settings_saved = True
             self.game.menu.settings_changed = True
+
+            # print(self.parser.data, self.game.parser.data, self.screen_settings.parser.data, self.game.menu.saved_settings)
             self.active = False
 
 
 class Reset_Settings(Static_Button):
     def __init__(self, game, text='Reset Settings', width=200, height=40, pos=(0, 0), btn_color_1='#475F77', btn_color_2='#354B5E', btn_color_3='#D74B4B', font='Arial', font_size=1, font_color='#FFFFFF', dynamic_elevation=6, static_elevation=0, border_radius=12):
         super().__init__(game, text, width, height, pos, btn_color_1, btn_color_2, btn_color_3, font, font_size, font_color, dynamic_elevation, static_elevation, border_radius)
-        self.control_settings = CONTROL_SETTINGS()
-        self.player_settings = PLAYER_SETTINGS()
+        self.control_settings = self.game.control_settings
+        self.player_settings = self.game.player_settings
 
     def function(self):
         if self.active:

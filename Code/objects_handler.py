@@ -1,15 +1,15 @@
 from os.path import join
 from objects import *
 from enemies import *
-from settings import PLAYER_SETTINGS
+# from settings import PLAYER_SETTINGS
 from random import choices, randrange
 import json
 
 
 class Object_Handler():
     def __init__(self, game):
-        self.settings()
         self.game = game
+        self.settings()
         self.objects = []
         self.enemies = []
         self.animated_enemies_path = join('Sources', 'enemies')
@@ -30,7 +30,7 @@ class Object_Handler():
         self.spawn_enemy()
 
     def settings(self):
-        self.player_settings = PLAYER_SETTINGS()
+        self.player_settings = self.game.player_settings
 
     def spawn_enemy(self):
         for i in range(self.enemies_count):

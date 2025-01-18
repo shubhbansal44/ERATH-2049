@@ -1,6 +1,6 @@
 import pygame as pg
 from os.path import join
-from settings import *
+# from settings import *
 from buttons import *
 
 
@@ -19,7 +19,7 @@ class Menu():
             'save_game': bool,
             'credits': bool
         }
-        self.saved_settings = self.parser.parse_settings()
+        self.saved_settings = self.parser.data
         self.buttons()
 
     def get_screens(self):
@@ -44,7 +44,7 @@ class Menu():
         self.settings_changed = True
 
     def settings(self):
-        self.screen_settings = SCREEN_SETTINGS()
+        self.screen_settings = self.game.screen_settings
         self.parser = self.game.parser
 
     def buttons(self):

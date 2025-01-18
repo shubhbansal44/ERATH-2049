@@ -13,10 +13,11 @@ class SCREEN_SETTINGS():
         self.MAX_FPS = 60
 
     def update(self):
+        self.parser.update()
         self.RES = self.WIDTH, self.HEIGHT = self.parser.parse_attr('width'), self.parser.parse_attr('height')
         self.H_WIDTH = self.WIDTH // 2
         self.H_HEIGHT = self.HEIGHT // 2
-        print(self.WIDTH, self.HEIGHT)
+        print("screen", self.parser.data)
 
 
 # MAP SETTINGS
@@ -27,6 +28,13 @@ class MAP_SETTINGS(SCREEN_SETTINGS):
         self.TILE_Y = 33
         self.TILE_DIMENSION_X = 8
         self.TILE_DIMENSION_Y = 8
+
+    def update(self):
+        self.parser.update()
+        self.RES = self.WIDTH, self.HEIGHT = self.parser.parse_attr('width'), self.parser.parse_attr('height')
+        self.H_WIDTH = self.WIDTH // 2
+        self.H_HEIGHT = self.HEIGHT // 2
+        print("map", self.parser.data)
 
 
 # PLAYER SETTINGS
@@ -41,8 +49,13 @@ class PLAYER_SETTINGS(SCREEN_SETTINGS):
         self.MAX_HEALTH = 1000
 
     def update(self):
+        self.parser.update()
         self.PLAYER_SPEED = self.parser.parse_attr('player_speed')
         self.PLAYER_ROT_SPEED = self.parser.parse_attr('player_rot_speed')
+        self.RES = self.WIDTH, self.HEIGHT = self.parser.parse_attr('width'), self.parser.parse_attr('height')
+        self.H_WIDTH = self.WIDTH // 2
+        self.H_HEIGHT = self.HEIGHT // 2
+        print("player", self.parser.data)
 
 
 # CONTROL SETTINGS
@@ -55,8 +68,13 @@ class CONTROL_SETTINGS(SCREEN_SETTINGS):
         self.MOUSE_BORDER_RIGHT = self.WIDTH - self.MOUSE_BORDER_LEFT
 
     def update(self):
+        self.parser.update()
+        self.RES = self.WIDTH, self.HEIGHT = self.parser.parse_attr('width'), self.parser.parse_attr('height')
+        self.H_WIDTH = self.WIDTH // 2
+        self.H_HEIGHT = self.HEIGHT // 2
         self.MOUSE_SENSITIVITY = self.parser.parse_attr('mouse_sensitivity')
         self.MOUSE_BORDER_RIGHT = self.WIDTH - self.MOUSE_BORDER_LEFT
+        print("control", self.parser.data)
         
 
 # VIEWPORT SETTINGS
@@ -71,9 +89,14 @@ class VIEWPORT_SETTINGS(SCREEN_SETTINGS):
         self.MAX_DEPTH = 20  # Max depth for raycasting
 
     def update(self):
+        self.parser.update()
+        self.RES = self.WIDTH, self.HEIGHT = self.parser.parse_attr('width'), self.parser.parse_attr('height')
+        self.H_WIDTH = self.WIDTH // 2
+        self.H_HEIGHT = self.HEIGHT // 2
         self.CASTED_RAYS = self.WIDTH // 2
         self.H_CASTED_RAYS = self.CASTED_RAYS // 2
         self.DELTA_ANGLE = self.FOV / self.CASTED_RAYS
+        print("viewport", self.parser.data)
 
 # RENDER SETTINGS
 class RENDER_SETTINGS(VIEWPORT_SETTINGS):
@@ -83,8 +106,16 @@ class RENDER_SETTINGS(VIEWPORT_SETTINGS):
         self.SCALE = self.WIDTH // self.CASTED_RAYS  # Width of each ray slice on screen
 
     def update(self):
+        self.parser.update()
+        self.RES = self.WIDTH, self.HEIGHT = self.parser.parse_attr('width'), self.parser.parse_attr('height')
+        self.H_WIDTH = self.WIDTH // 2
+        self.H_HEIGHT = self.HEIGHT // 2
+        self.CASTED_RAYS = self.WIDTH // 2
+        self.H_CASTED_RAYS = self.CASTED_RAYS // 2
+        self.DELTA_ANGLE = self.FOV / self.CASTED_RAYS
         self.SCREEN_DEPTH = self.H_WIDTH / math.tan(self.H_FOV)
         self.SCALE = self.WIDTH // self.CASTED_RAYS
+        print("render", self.parser.data)
 
 # TEXTURE SETTINGS
 class TEXTURE_SETTINGS(SCREEN_SETTINGS):
@@ -94,3 +125,10 @@ class TEXTURE_SETTINGS(SCREEN_SETTINGS):
         self.H_TEXTURE_SIZE = self.TEXTURE_SIZE // 2  # Half of the texture resolution
         self.FLOOR = (30, 30, 30)
         self.DIGIT_SIZE = 60
+
+    def update(self):
+        self.parser.update()
+        self.RES = self.WIDTH, self.HEIGHT = self.parser.parse_attr('width'), self.parser.parse_attr('height')
+        self.H_WIDTH = self.WIDTH // 2
+        self.H_HEIGHT = self.HEIGHT // 2
+        print("texture", self.parser.data)

@@ -2,12 +2,12 @@
 import pygame as pg
 from os.path import join
 import math
-from settings import SCREEN_SETTINGS, TEXTURE_SETTINGS
+# from settings import SCREEN_SETTINGS, TEXTURE_SETTINGS
 
 class Renderer():
     def __init__(self, game):
-        self.settings()
         self.game = game
+        self.settings()
         self.screen = game.SCREEN
         # self.base_path = os.path.dirname(os.path.abspath(__file__)).rsplit('\\', 1)[0]
         self.wall_textures = self.load_wall_textures()
@@ -23,8 +23,8 @@ class Renderer():
         self.win_blit = False
 
     def settings(self):
-        self.screen_settings = SCREEN_SETTINGS()
-        self.texture_settings = TEXTURE_SETTINGS()
+        self.screen_settings = self.game.screen_settings
+        self.texture_settings = self.game.texture_settings
 
     def blood(self):
         self.screen.blit(self.blood_screen, (0, 0))

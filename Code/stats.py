@@ -1,13 +1,13 @@
 import pygame as pg
 import psutil as cpu
 import GPUtil as gpu
-from settings import SCREEN_SETTINGS
+# from settings import SCREEN_SETTINGS
 
 
 class Stats():
     def __init__(self, game):
-        self.settings()
         self.game = game
+        self.settings()
         self.clock = pg.time.Clock()
         self.delta_time = 1
         self.stats_screen = pg.Surface((350, 200))
@@ -20,7 +20,7 @@ class Stats():
         self.g_pressed = False
 
     def settings(self):
-        self.screen_settings = SCREEN_SETTINGS()
+        self.screen_settings = self.game.screen_settings
 
     def stats(self):
         key = pg.key.get_pressed()
