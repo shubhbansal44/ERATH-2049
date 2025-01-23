@@ -1,6 +1,6 @@
-# imports
+# IMPORTS
 import pygame as pg
-# from settings import SCREEN_SETTINGS, MAP_SETTINGS
+from settings import SCREEN_SETTINGS, MAP_SETTINGS
 
 
 mini_map = [
@@ -52,8 +52,8 @@ class Game_Map():
         self.m_pressed = False
 
     def settings(self):
-        # self.screen_settings = self.game.screen_settings
-        self.map_settings = self.game.map_settings
+        self.screen_settings = SCREEN_SETTINGS()
+        self.map_settings = MAP_SETTINGS()
 
     def in_view(self):
         key = pg.key.get_pressed()
@@ -75,7 +75,7 @@ class Game_Map():
                 pg.draw.rect(
                     self.game.SCREEN,
                     'black',
-                    ((self.map_settings.WIDTH - self.map_settings.TILE_X * self.map_settings.TILE_DIMENSION_X) + pos[0] * self.map_settings.TILE_DIMENSION_X, pos[1] * self.map_settings.TILE_DIMENSION_Y, self.map_settings.TILE_DIMENSION_X, self.map_settings.TILE_DIMENSION_Y))
+                    ((self.screen_settings.WIDTH - self.map_settings.TILE_X * self.map_settings.TILE_DIMENSION_X) + pos[0] * self.map_settings.TILE_DIMENSION_X, pos[1] * self.map_settings.TILE_DIMENSION_Y, self.map_settings.TILE_DIMENSION_X, self.map_settings.TILE_DIMENSION_Y))
 
     def update(self):
         self.in_view()

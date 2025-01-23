@@ -5,130 +5,128 @@ from parser import *
 
 # SCREEN SETTINGS
 class SCREEN_SETTINGS():
+    RES = None
+    WIDTH = None
+    HEIGHT = None
+    H_HEIGHT = None
+    H_WIDTH = None
+    MAX_FPS = None
+
     def __init__(self):
         self.parser = Parser()
-        self.RES = self.WIDTH, self.HEIGHT = self.parser.parse_attr('width'), self.parser.parse_attr('height') # 1536, 864
-        self.H_WIDTH = self.WIDTH // 2
-        self.H_HEIGHT = self.HEIGHT // 2
-        self.MAX_FPS = 60
+        SCREEN_SETTINGS.RES = SCREEN_SETTINGS.WIDTH, SCREEN_SETTINGS.HEIGHT = self.parser.parse_attr('width'), self.parser.parse_attr('height') # 1536, 864
+        SCREEN_SETTINGS.H_WIDTH = SCREEN_SETTINGS.WIDTH // 2
+        SCREEN_SETTINGS.H_HEIGHT = SCREEN_SETTINGS.HEIGHT // 2
+        SCREEN_SETTINGS.MAX_FPS = 60
 
     def update(self):
-        self.parser.update()
-        self.RES = self.WIDTH, self.HEIGHT = self.parser.parse_attr('width'), self.parser.parse_attr('height')
-        self.H_WIDTH = self.WIDTH // 2
-        self.H_HEIGHT = self.HEIGHT // 2
-        print("screen", self.parser.data)
+        SCREEN_SETTINGS.RES = SCREEN_SETTINGS.WIDTH, SCREEN_SETTINGS.HEIGHT = self.parser.parse_attr('width'), self.parser.parse_attr('height')
+        SCREEN_SETTINGS.H_WIDTH = SCREEN_SETTINGS.WIDTH // 2
+        SCREEN_SETTINGS.H_HEIGHT = SCREEN_SETTINGS.HEIGHT // 2
 
 
 # MAP SETTINGS
-class MAP_SETTINGS(SCREEN_SETTINGS):
-    def __init__(self):
-        super().__init__()
-        self.TILE_X = 32
-        self.TILE_Y = 33
-        self.TILE_DIMENSION_X = 8
-        self.TILE_DIMENSION_Y = 8
+class MAP_SETTINGS():
+    TILE_X = None
+    TILE_Y = None
+    TILE_DIMENSION_X = None
+    TILE_DIMENSION_Y = None
 
-    def update(self):
-        self.parser.update()
-        self.RES = self.WIDTH, self.HEIGHT = self.parser.parse_attr('width'), self.parser.parse_attr('height')
-        self.H_WIDTH = self.WIDTH // 2
-        self.H_HEIGHT = self.HEIGHT // 2
-        print("map", self.parser.data)
+    def __init__(self):
+        MAP_SETTINGS.TILE_X = 32
+        MAP_SETTINGS.TILE_Y = 33
+        MAP_SETTINGS.TILE_DIMENSION_X = 8
+        MAP_SETTINGS.TILE_DIMENSION_Y = 8
 
 
 # PLAYER SETTINGS
-class PLAYER_SETTINGS(SCREEN_SETTINGS):
+class PLAYER_SETTINGS():
+    PLAYER_X = None
+    PLAYER_POS = None
+    PLAYER_Y = None
+    PLAYER_ANGLE = None
+    PLAYER_SPEED = None
+    PLAYER_ROT_SPEED = None
+    PLAYER_SCALE = None
+    MAX_HEALTH = None
+
     def __init__(self):
-        super().__init__()
-        self.PLAYER_X, self.PLAYER_Y = self.PLAYER_POS = 13.5, 13.5 # (x-coordinate, y-coordinate)
-        self.PLAYER_ANGLE = 3 * math.pi / 2  # Starting angle (facing up)
-        self.PLAYER_SPEED = self.parser.parse_attr('player_speed')
-        self.PLAYER_ROT_SPEED = self.parser.parse_attr('player_rot_speed')
-        self.PLAYER_SCALE = 60
-        self.MAX_HEALTH = 1000
+        self.parser = Parser()
+        PLAYER_SETTINGS.PLAYER_X, PLAYER_SETTINGS.PLAYER_Y = PLAYER_SETTINGS.PLAYER_POS = 13.5, 13.5 # (x-coordinate, y-coordinate)
+        PLAYER_SETTINGS.PLAYER_ANGLE = 3 * math.pi / 2  # Starting angle (facing up)
+        PLAYER_SETTINGS.PLAYER_SPEED = self.parser.parse_attr('player_speed')
+        PLAYER_SETTINGS.PLAYER_ROT_SPEED = self.parser.parse_attr('player_rot_speed')
+        PLAYER_SETTINGS.PLAYER_SCALE = 60
+        PLAYER_SETTINGS.MAX_HEALTH = 1000
 
     def update(self):
-        self.parser.update()
-        self.PLAYER_SPEED = self.parser.parse_attr('player_speed')
-        self.PLAYER_ROT_SPEED = self.parser.parse_attr('player_rot_speed')
-        self.RES = self.WIDTH, self.HEIGHT = self.parser.parse_attr('width'), self.parser.parse_attr('height')
-        self.H_WIDTH = self.WIDTH // 2
-        self.H_HEIGHT = self.HEIGHT // 2
-        print("player", self.parser.data)
+        PLAYER_SETTINGS.PLAYER_SPEED = self.parser.parse_attr('player_speed')
+        PLAYER_SETTINGS.PLAYER_ROT_SPEED = self.parser.parse_attr('player_rot_speed')
 
 
 # CONTROL SETTINGS
-class CONTROL_SETTINGS(SCREEN_SETTINGS):
+class CONTROL_SETTINGS():
+    MOUSE_SENSITIVITY = None
+    MOUSE_MAX_RELATIVE = None
+    MOUSE_BORDER_LEFT = None
+    MOUSE_BORDER_RIGHT = None
+
     def __init__(self):
-        super().__init__()
-        self.MOUSE_SENSITIVITY = self.parser.parse_attr('mouse_sensitivity')
-        self.MOUSE_MAX_RELATIVE = 40
-        self.MOUSE_BORDER_LEFT = 10
-        self.MOUSE_BORDER_RIGHT = self.WIDTH - self.MOUSE_BORDER_LEFT
+        self.parser = Parser()
+        CONTROL_SETTINGS.MOUSE_SENSITIVITY = self.parser.parse_attr('mouse_sensitivity')
+        CONTROL_SETTINGS.MOUSE_MAX_RELATIVE = 40
+        CONTROL_SETTINGS.MOUSE_BORDER_LEFT = 10
+        CONTROL_SETTINGS.MOUSE_BORDER_RIGHT = SCREEN_SETTINGS.WIDTH - CONTROL_SETTINGS.MOUSE_BORDER_LEFT
 
     def update(self):
-        self.parser.update()
-        self.RES = self.WIDTH, self.HEIGHT = self.parser.parse_attr('width'), self.parser.parse_attr('height')
-        self.H_WIDTH = self.WIDTH // 2
-        self.H_HEIGHT = self.HEIGHT // 2
-        self.MOUSE_SENSITIVITY = self.parser.parse_attr('mouse_sensitivity')
-        self.MOUSE_BORDER_RIGHT = self.WIDTH - self.MOUSE_BORDER_LEFT
-        print("control", self.parser.data)
+        CONTROL_SETTINGS.MOUSE_SENSITIVITY = self.parser.parse_attr('mouse_sensitivity')
+        CONTROL_SETTINGS.MOUSE_BORDER_RIGHT = SCREEN_SETTINGS.WIDTH - CONTROL_SETTINGS.MOUSE_BORDER_LEFT
         
 
 # VIEWPORT SETTINGS
-class VIEWPORT_SETTINGS(SCREEN_SETTINGS):
+class VIEWPORT_SETTINGS():
+    FOV = None
+    H_FOV = None
+    CASTED_RAYS = None
+    H_CASTED_RAYS = None
+    DELTA_ANGLE = None
+    MAX_DEPTH = None
+
     def __init__(self):
-        super().__init__()
-        self.FOV = math.pi / 3  # Field of view (60 degrees)
-        self.H_FOV = self.FOV / 2  # Half of the field of view
-        self.CASTED_RAYS = self.WIDTH // 2  # Number of rays to cast
-        self.H_CASTED_RAYS = self.CASTED_RAYS // 2  # Half the number of rays
-        self.DELTA_ANGLE = self.FOV / self.CASTED_RAYS  # Angle between each ray
-        self.MAX_DEPTH = 20  # Max depth for raycasting
+        VIEWPORT_SETTINGS.FOV = math.pi / 3  # Field of view (60 degrees)
+        VIEWPORT_SETTINGS.H_FOV = VIEWPORT_SETTINGS.FOV / 2  # Half of the field of view
+        VIEWPORT_SETTINGS.CASTED_RAYS = SCREEN_SETTINGS.WIDTH // 2  # Number of rays to cast
+        VIEWPORT_SETTINGS.H_CASTED_RAYS = VIEWPORT_SETTINGS.CASTED_RAYS // 2  # Half the number of rays
+        VIEWPORT_SETTINGS.DELTA_ANGLE = VIEWPORT_SETTINGS.FOV / VIEWPORT_SETTINGS.CASTED_RAYS  # Angle between each ray
+        VIEWPORT_SETTINGS.MAX_DEPTH = 20  # Max depth for raycasting
 
     def update(self):
-        self.parser.update()
-        self.RES = self.WIDTH, self.HEIGHT = self.parser.parse_attr('width'), self.parser.parse_attr('height')
-        self.H_WIDTH = self.WIDTH // 2
-        self.H_HEIGHT = self.HEIGHT // 2
-        self.CASTED_RAYS = self.WIDTH // 2
-        self.H_CASTED_RAYS = self.CASTED_RAYS // 2
-        self.DELTA_ANGLE = self.FOV / self.CASTED_RAYS
-        print("viewport", self.parser.data)
+        VIEWPORT_SETTINGS.CASTED_RAYS = SCREEN_SETTINGS.WIDTH // 2
+        VIEWPORT_SETTINGS.H_CASTED_RAYS = VIEWPORT_SETTINGS.CASTED_RAYS // 2
+        VIEWPORT_SETTINGS.DELTA_ANGLE = VIEWPORT_SETTINGS.FOV / VIEWPORT_SETTINGS.CASTED_RAYS
 
 # RENDER SETTINGS
-class RENDER_SETTINGS(VIEWPORT_SETTINGS):
+class RENDER_SETTINGS():
+    SCREEN_DEPTH = None
+    SCALE = None
+
     def __init__(self):
-        super().__init__()
-        self.SCREEN_DEPTH = self.H_WIDTH / math.tan(self.H_FOV)  # Distance from the player to the screen
-        self.SCALE = self.WIDTH // self.CASTED_RAYS  # Width of each ray slice on screen
+        RENDER_SETTINGS.SCREEN_DEPTH = SCREEN_SETTINGS.H_WIDTH / math.tan(VIEWPORT_SETTINGS.H_FOV)  # Distance from the player to the screen
+        RENDER_SETTINGS.SCALE = SCREEN_SETTINGS.WIDTH // VIEWPORT_SETTINGS.CASTED_RAYS  # Width of each ray slice on screen
 
     def update(self):
-        self.parser.update()
-        self.RES = self.WIDTH, self.HEIGHT = self.parser.parse_attr('width'), self.parser.parse_attr('height')
-        self.H_WIDTH = self.WIDTH // 2
-        self.H_HEIGHT = self.HEIGHT // 2
-        self.CASTED_RAYS = self.WIDTH // 2
-        self.H_CASTED_RAYS = self.CASTED_RAYS // 2
-        self.DELTA_ANGLE = self.FOV / self.CASTED_RAYS
-        self.SCREEN_DEPTH = self.H_WIDTH / math.tan(self.H_FOV)
-        self.SCALE = self.WIDTH // self.CASTED_RAYS
-        print("render", self.parser.data)
+        RENDER_SETTINGS.SCREEN_DEPTH = SCREEN_SETTINGS.H_WIDTH / math.tan(VIEWPORT_SETTINGS.H_FOV)
+        RENDER_SETTINGS.SCALE = SCREEN_SETTINGS.WIDTH // VIEWPORT_SETTINGS.CASTED_RAYS
 
 # TEXTURE SETTINGS
-class TEXTURE_SETTINGS(SCREEN_SETTINGS):
-    def __init__(self):
-        super().__init__()
-        self.TEXTURE_SIZE = 256  # Texture resolution
-        self.H_TEXTURE_SIZE = self.TEXTURE_SIZE // 2  # Half of the texture resolution
-        self.FLOOR = (30, 30, 30)
-        self.DIGIT_SIZE = 60
+class TEXTURE_SETTINGS():
+    TEXTURE_SIZE = None
+    H_TEXTURE_SIZE = None
+    FLOOR = None
+    DIGIT_SIZE = None
 
-    def update(self):
-        self.parser.update()
-        self.RES = self.WIDTH, self.HEIGHT = self.parser.parse_attr('width'), self.parser.parse_attr('height')
-        self.H_WIDTH = self.WIDTH // 2
-        self.H_HEIGHT = self.HEIGHT // 2
-        print("texture", self.parser.data)
+    def __init__(self):
+        TEXTURE_SETTINGS.TEXTURE_SIZE = 256  # Texture resolution
+        TEXTURE_SETTINGS.H_TEXTURE_SIZE = TEXTURE_SETTINGS.TEXTURE_SIZE // 2  # Half of the texture resolution
+        TEXTURE_SETTINGS.FLOOR = (30, 30, 30)
+        TEXTURE_SETTINGS.DIGIT_SIZE = 60

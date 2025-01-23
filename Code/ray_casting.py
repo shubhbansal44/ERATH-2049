@@ -1,6 +1,7 @@
+# IMPORTS
 import pygame as pg
 import math
-# from settings import RENDER_SETTINGS, TEXTURE_SETTINGS, MAP_SETTINGS
+from settings import RENDER_SETTINGS, SCREEN_SETTINGS, TEXTURE_SETTINGS, MAP_SETTINGS, VIEWPORT_SETTINGS
 
 class Ray_Caster():
     def __init__(self, game):
@@ -13,9 +14,11 @@ class Ray_Caster():
         self.textures = self.game.renderer.wall_textures
 
     def settings(self):
-        self.render_settings = self.game.render_settings
-        self.texture_settings = self.game.texture_settings
-        self.map_settings = self.game.map_settings
+        self.render_settings = RENDER_SETTINGS()
+        self.texture_settings = TEXTURE_SETTINGS()
+        self.map_settings = MAP_SETTINGS()
+        self.screen_settings = SCREEN_SETTINGS()
+        self.viewport_settings = VIEWPORT_SETTINGS()
 
     def get_walls(self):
         self.walls = []
@@ -23,18 +26,18 @@ class Ray_Caster():
         self.enemies = []
         for ray, values in enumerate(self.results):
             depth, projection_height, texture, offset = values
-            if projection_height < self.render_settings.HEIGHT:
+            if projection_height < self.screen_settings.HEIGHT:
                 wall_column = self.textures[texture].subsurface(
                     (offset * (self.texture_settings.TEXTURE_SIZE - self.render_settings.SCALE), 0, self.render_settings.SCALE, self.texture_settings.TEXTURE_SIZE)
                 )
                 wall_column = pg.transform.scale(wall_column, (self.render_settings.SCALE, projection_height))
-                wall_pos = (ray * self.render_settings.SCALE, self.render_settings.H_HEIGHT - projection_height // 2)
+                wall_pos = (ray * self.render_settings.SCALE, self.screen_settings.H_HEIGHT - projection_height // 2)
             else:
-                texture_height = self.texture_settings.TEXTURE_SIZE * self.render_settings.HEIGHT / projection_height
+                texture_height = self.texture_settings.TEXTURE_SIZE * self.screen_settings.HEIGHT / projection_height
                 wall_column = self.textures[texture].subsurface(
                     (offset * (self.texture_settings.TEXTURE_SIZE - self.render_settings.SCALE), self.texture_settings.H_TEXTURE_SIZE - texture_height // 2, self.render_settings.SCALE, texture_height)
                 )
-                wall_column = pg.transform.scale(wall_column, (self.render_settings.SCALE, self.render_settings.HEIGHT))
+                wall_column = pg.transform.scale(wall_column, (self.render_settings.SCALE, self.screen_settings.HEIGHT))
                 wall_pos = (ray * self.render_settings.SCALE, 0)
 
             self.walls.append((depth, wall_column, wall_pos))
@@ -45,11 +48,11 @@ class Ray_Caster():
         # Player position and angle
         player_x, player_y = self.game.player.pos
         map_x, map_y = self.game.player.map_pos
-        ray_angle = self.game.player.angle - self.render_settings.H_FOV + .0001  # Initial ray angle
+        ray_angle = self.game.player.angle - self.viewport_settings.H_FOV + .0001  # Initial ray angle
         texture_hor, texture_vert = 1, 1
 
         # Casting rays
-        for rays in range(self.render_settings.CASTED_RAYS):
+        for rays in range(self.viewport_settings.CASTED_RAYS):
             sin_a = math.sin(ray_angle)
             cos_a = math.cos(ray_angle)
 
@@ -61,7 +64,7 @@ class Ray_Caster():
             dx = delta_depth * cos_a
 
             # Horizontal wall collision detection
-            for depth in range(self.render_settings.MAX_DEPTH):
+            for depth in range(self.viewport_settings.MAX_DEPTH):
                 tile_hor = (int(x_hor), int(y_hor))
                 if tile_hor in self.game.map.world_map:
                     texture_hor = self.game.map.world_map[tile_hor]
@@ -78,7 +81,7 @@ class Ray_Caster():
             dy = delta_depth * sin_a
 
             # Vertical wall collision detection
-            for depth in range(self.render_settings.MAX_DEPTH):
+            for depth in range(self.viewport_settings.MAX_DEPTH):
                 tile_vert = (int(x_vert), int(y_vert))
                 if tile_vert in self.game.map.world_map:
                     texture_vert = self.game.map.world_map[tile_vert]
@@ -113,15 +116,15 @@ class Ray_Caster():
             self.results.append((depth, projection_height, texture, offset))
 
             # Move to the next ray
-            ray_angle += self.render_settings.DELTA_ANGLE
+            ray_angle += self.viewport_settings.DELTA_ANGLE
 
     def draw_rays(self, player_x, player_y, cos_a, sin_a, depth):
         if self.game.map.view and not self.game.x_mode:
             pg.draw.line(
                 self.game.SCREEN,
                 'darkgray',
-                ((self.render_settings.WIDTH - self.map_settings.TILE_X * self.map_settings.TILE_DIMENSION_X) + player_x * self.map_settings.TILE_DIMENSION_X, player_y * self.map_settings.TILE_DIMENSION_Y),
-                ((self.render_settings.WIDTH - self.map_settings.TILE_X * self.map_settings.TILE_DIMENSION_X) + player_x * self.map_settings.TILE_DIMENSION_X + depth * cos_a * self.map_settings.TILE_DIMENSION_X, player_y * self.map_settings.TILE_DIMENSION_X + depth * sin_a * self.map_settings.TILE_DIMENSION_Y),
+                ((self.screen_settings.WIDTH - self.map_settings.TILE_X * self.map_settings.TILE_DIMENSION_X) + player_x * self.map_settings.TILE_DIMENSION_X, player_y * self.map_settings.TILE_DIMENSION_Y),
+                ((self.screen_settings.WIDTH - self.map_settings.TILE_X * self.map_settings.TILE_DIMENSION_X) + player_x * self.map_settings.TILE_DIMENSION_X + depth * cos_a * self.map_settings.TILE_DIMENSION_X, player_y * self.map_settings.TILE_DIMENSION_X + depth * sin_a * self.map_settings.TILE_DIMENSION_Y),
                 1
             )
 
@@ -136,7 +139,7 @@ class Ray_Caster():
             pg.draw.rect(
                 self.game.SCREEN,
                 color,
-                (rays * self.render_settings.SCALE, self.render_settings.H_HEIGHT - projection_height // 2, self.render_settings.SCALE, projection_height)
+                (rays * self.render_settings.SCALE, self.screen_settings.H_HEIGHT - projection_height // 2, self.render_settings.SCALE, projection_height)
             )
             self.game.x_mode = True
             self.game.renderer.render_enemies()

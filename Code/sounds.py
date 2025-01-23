@@ -1,5 +1,5 @@
+# IMPORTS
 import pygame as pg
-import os
 from os.path import join
 
 

@@ -1,5 +1,6 @@
+# IMPORTS
 import pygame as pg
-# from settings import PLAYER_SETTINGS, MAP_SETTINGS, CONTROL_SETTINGS, TEXTURE_SETTINGS
+from settings import PLAYER_SETTINGS, MAP_SETTINGS, CONTROL_SETTINGS, TEXTURE_SETTINGS, SCREEN_SETTINGS
 import math
 from os.path import join
 
@@ -21,10 +22,11 @@ class Player():
         self.h_pressed = False
 
     def settings(self):
-        self.player_settings = self.game.player_settings
-        self.map_settings = self.game.map_settings
-        self.control_settings = self.game.control_settings
-        self.texture_settings = self.game.texture_settings
+        self.screen_settings = SCREEN_SETTINGS()
+        self.player_settings = PLAYER_SETTINGS()
+        self.map_settings = MAP_SETTINGS()
+        self.control_settings = CONTROL_SETTINGS()
+        self.texture_settings = TEXTURE_SETTINGS()
 
     def in_view(self):
         key = pg.key.get_pressed()
@@ -50,7 +52,7 @@ class Player():
     def get_hurt(self, damage):
         self.health -= damage
         self.game.renderer.blood()
-        # self.game.sound.player_pain.play()
+        # self.game.sound.player_pain.play() TODO
         self.get_murdered()
 
     def fire(self):
@@ -101,7 +103,7 @@ class Player():
             pg.draw.circle(
                 self.game.SCREEN,
                 'blue',
-                ((self.control_settings.WIDTH - self.map_settings.TILE_X * self.map_settings.TILE_DIMENSION_X) + self.x * self.map_settings.TILE_DIMENSION_X, self.y * self.map_settings.TILE_DIMENSION_Y),
+                ((self.screen_settings.WIDTH - self.map_settings.TILE_X * self.map_settings.TILE_DIMENSION_X) + self.x * self.map_settings.TILE_DIMENSION_X, self.y * self.map_settings.TILE_DIMENSION_Y),
                 4
             )
 
@@ -115,7 +117,7 @@ class Player():
     def mouse_control(self):
         mx, my = pg.mouse.get_pos()
         if mx < self.control_settings.MOUSE_BORDER_LEFT or mx > self.control_settings.MOUSE_BORDER_RIGHT:
-            pg.mouse.set_pos([self.control_settings.H_WIDTH, self.control_settings.H_HEIGHT])
+            pg.mouse.set_pos([self.screen_settings.H_WIDTH, self.screen_settings.H_HEIGHT])
         self.rel = pg.mouse.get_rel()[0]
         self.rel = max(-self.control_settings.MOUSE_MAX_RELATIVE, min(self.control_settings.MOUSE_MAX_RELATIVE, self.rel))
         self.angle += self.rel * self.control_settings.MOUSE_SENSITIVITY * self.game.stats.delta_time

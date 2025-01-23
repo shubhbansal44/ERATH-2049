@@ -1,7 +1,8 @@
+# IMPORTS
 from objects import *
 from os.path import join
 from random import randint, random
-# from settings import MAP_SETTINGS
+from settings import MAP_SETTINGS, VIEWPORT_SETTINGS, SCREEN_SETTINGS, RENDER_SETTINGS
 
 
 class Enemy(Animated_Objects):
@@ -32,8 +33,10 @@ class Enemy(Animated_Objects):
         self.id = id
 
     def settings(self):
-        self.render_settings = self.game.render_settings
-        self.map_settings = self.game.map_settings
+        self.render_settings = RENDER_SETTINGS()
+        self.map_settings = MAP_SETTINGS()
+        self.screen_settings = SCREEN_SETTINGS()
+        self.viewport_settings = VIEWPORT_SETTINGS()
 
     def update(self):
         self.in_view()
@@ -45,7 +48,6 @@ class Enemy(Animated_Objects):
                 self.get_murdered()
             else:
                 self.dlt()
-                # pass
         else:
             self.check_animation()
 
@@ -65,7 +67,7 @@ class Enemy(Animated_Objects):
 
     def get_shot(self):
         if self.sight and self.game.player.fired:
-            if self.render_settings.H_WIDTH - self.object_h_width < self.screen_x < self.render_settings.H_WIDTH + self.object_h_width:
+            if self.screen_settings.H_WIDTH - self.object_h_width < self.screen_x < self.screen_settings.H_WIDTH + self.object_h_width:
                 self.game.sound.pain.play()
                 self.game.player.fired = False
                 self.pain = True
@@ -172,7 +174,7 @@ class Enemy(Animated_Objects):
         dx = delta_depth * cos_a
 
         # Horizontal wall collision detection
-        for depth in range(self.render_settings.MAX_DEPTH):
+        for depth in range(self.viewport_settings.MAX_DEPTH):
             tile_hor = (int(x_hor), int(y_hor))
             if tile_hor == self.map_pos:
                 player_dist_h = depth_hor
@@ -192,7 +194,7 @@ class Enemy(Animated_Objects):
         dy = delta_depth * sin_a
 
         # Vertical wall collision detection
-        for depth in range(self.render_settings.MAX_DEPTH):
+        for depth in range(self.viewport_settings.MAX_DEPTH):
             tile_vert = (int(x_vert), int(y_vert))
             if tile_vert == self.map_pos:
                 player_dist_v = depth_vert
@@ -215,15 +217,15 @@ class Enemy(Animated_Objects):
             pg.draw.circle(
                 self.game.SCREEN,
                 'red',
-                ((self.render_settings.WIDTH - self.map_settings.TILE_X * self.map_settings.TILE_DIMENSION_X) + self.x * self.map_settings.TILE_DIMENSION_X, self.y * self.map_settings.TILE_DIMENSION_Y),
+                ((self.screen_settings.WIDTH - self.map_settings.TILE_X * self.map_settings.TILE_DIMENSION_X) + self.x * self.map_settings.TILE_DIMENSION_X, self.y * self.map_settings.TILE_DIMENSION_Y),
                 4
             )
             if self.sight:
                 pg.draw.line(
                     self.game.SCREEN,
                     'yellow',
-                    ((self.render_settings.WIDTH - self.map_settings.TILE_X * self.map_settings.TILE_DIMENSION_X) + self.game.player.x * self.map_settings.TILE_DIMENSION_X, self.game.player.y * self.map_settings.TILE_DIMENSION_Y),
-                    ((self.render_settings.WIDTH - self.map_settings.TILE_X * self.map_settings.TILE_DIMENSION_X) + self.x * self.map_settings.TILE_DIMENSION_X, self.y * self.map_settings.TILE_DIMENSION_Y),
+                    ((self.screen_settings.WIDTH - self.map_settings.TILE_X * self.map_settings.TILE_DIMENSION_X) + self.game.player.x * self.map_settings.TILE_DIMENSION_X, self.game.player.y * self.map_settings.TILE_DIMENSION_Y),
+                    ((self.screen_settings.WIDTH - self.map_settings.TILE_X * self.map_settings.TILE_DIMENSION_X) + self.x * self.map_settings.TILE_DIMENSION_X, self.y * self.map_settings.TILE_DIMENSION_Y),
                     1
                 )
 

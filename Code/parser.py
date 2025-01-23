@@ -5,12 +5,15 @@ import json
 
 
 class Parser:
+    data = None
+    default_data = None
+
     def __init__(self):
         self.default_settings_path = join('Code', 'default_settings.txt')
         self.saved_settings_path = join('Code', 'saved_settings.txt')
         self.unparse_default_settings()
-        self.data = self.parse_settings()
-        self.default_data = self.parse_default_settings()
+        Parser.data = self.parse_settings()
+        Parser.default_data = self.parse_default_settings()
 
     def parse_settings(self):
         try:
@@ -48,8 +51,13 @@ class Parser:
             with open(self.default_settings_path, 'w') as settings:
                 json.dump(data, settings)
 
-    def update(self):
-        self.data = self.parse_settings()
+    def update(self, method):
+        if method == "SAVE":
+            Parser.data = self.parse_settings()
+        elif method == "RESET":
+            Parser.data = Parser.default_data
+        else:
+            pass
 
     def parse_credits(self, path):
         with open(path, 'r') as file:
@@ -64,5 +72,4 @@ class Parser:
         return credits_text
     
     def parse_attr(self, attribute):
-        # print(self.data)
-        return self.data[attribute]
+        return Parser.data[attribute]

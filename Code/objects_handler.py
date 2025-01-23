@@ -1,9 +1,9 @@
+# IMPORTS
 from os.path import join
 from objects import *
 from enemies import *
-# from settings import PLAYER_SETTINGS
+from settings import PLAYER_SETTINGS
 from random import choices, randrange
-import json
 
 
 class Object_Handler():
@@ -30,7 +30,7 @@ class Object_Handler():
         self.spawn_enemy()
 
     def settings(self):
-        self.player_settings = self.game.player_settings
+        self.player_settings = PLAYER_SETTINGS()
 
     def spawn_enemy(self):
         for i in range(self.enemies_count):
@@ -47,7 +47,7 @@ class Object_Handler():
         self.enemy_pos = {enemy.map_pos for enemy in self.enemies if enemy.alive}
         self.enemy_data = {x: {'enemy': self.enemy_id[enemy], 'pos': enemy.pos, 'health': enemy.health} for x, enemy in enumerate(self.enemies) if enemy.alive}
         # with open(join('Code', 'saved_game.txt'), 'w') as file:
-        #     json.dump(self.enemy_data, file)
+        #     json.dump(self.enemy_data, file) TODO
         [object.update() for object in self.objects]
         [enemy.update() for enemy in self.enemies]
 

@@ -1,8 +1,9 @@
+# IMPORTS
 import pygame as pg
 import os
 from collections import deque
 import math
-# from settings import RENDER_SETTINGS
+from settings import RENDER_SETTINGS, SCREEN_SETTINGS, VIEWPORT_SETTINGS
 
 
 class Static_Objects():
@@ -21,7 +22,9 @@ class Static_Objects():
         self.height_shift = shift
 
     def settings(self):
-        self.render_settings = self.game.render_settings
+        self.render_settings = RENDER_SETTINGS()
+        self.screen_settings = SCREEN_SETTINGS()
+        self.viewport_settings = VIEWPORT_SETTINGS()
 
     def dlt(self):
         self.alive = False
@@ -34,7 +37,7 @@ class Static_Objects():
         image = pg.transform.scale(self.image, (projection_width, projection_height))
         self.object_h_width = projection_width // 2
         height_shift = projection_height * self.height_shift
-        pos = self.screen_x - self.object_h_width, self.render_settings.H_HEIGHT - projection_height // 2 + height_shift
+        pos = self.screen_x - self.object_h_width, self.screen_settings.H_HEIGHT - projection_height // 2 + height_shift
         if self.id != 'enemies':
             self.game.raycast.objects.append((self.norm_dist, image, pos))
         else:
@@ -49,11 +52,11 @@ class Static_Objects():
         delta = self.theta - self.player.angle
         if (dx > 0 and self.player.angle > math.pi) or (dx < 0 and dy < 0):
             delta += math.tau
-        delta_rays = delta / self.render_settings.DELTA_ANGLE
-        self.screen_x = (self.render_settings.H_CASTED_RAYS + delta_rays) * self.render_settings.SCALE
+        delta_rays = delta / self.viewport_settings.DELTA_ANGLE
+        self.screen_x = (self.viewport_settings.H_CASTED_RAYS + delta_rays) * self.render_settings.SCALE
         self.dist = math.hypot(dx, dy)
         self.norm_dist = self.dist * math.cos(delta)
-        if -self.image_h_width < self.screen_x < (self.render_settings.WIDTH + self.image_h_width) and self.norm_dist > .5:
+        if -self.image_h_width < self.screen_x < (self.screen_settings.WIDTH + self.image_h_width) and self.norm_dist > .5:
             self.render_objects()
 
     def update(self):

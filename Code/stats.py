@@ -1,7 +1,8 @@
+# IMPORTS
 import pygame as pg
-import psutil as cpu
-import GPUtil as gpu
-# from settings import SCREEN_SETTINGS
+# import psutil as cpu TODO
+# import GPUtil as gpu TODO
+from settings import SCREEN_SETTINGS
 
 
 class Stats():
@@ -20,7 +21,7 @@ class Stats():
         self.g_pressed = False
 
     def settings(self):
-        self.screen_settings = self.game.screen_settings
+        self.screen_settings = SCREEN_SETTINGS()
 
     def stats(self):
         key = pg.key.get_pressed()

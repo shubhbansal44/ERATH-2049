@@ -1,21 +1,23 @@
+# IMPORTS
 import json
 import pygame as pg
 import sys
 from os.path import join
-# from settings import *
+from parser import Parser
+from settings import PLAYER_SETTINGS, SCREEN_SETTINGS, RENDER_SETTINGS, VIEWPORT_SETTINGS, CONTROL_SETTINGS
 
 
 class Static_Button():
     def __init__(self, game, text='click', width=15.625, height=6.48, pos=(0, 0), btn_color_1='#475F77', btn_color_2='#354B5E', btn_color_3='#D74B4B', font='Arial', font_size=1, font_color='#FFFFFF', dynamic_elevation=6, static_elevation=0, border_radius=12):
         self.game = game
-        self.parser = game.parser
+        self.settings()
         self.screen = game.SCREEN
         self.width_precent = width
         self.height_precent = height
         self.pos_x_percent = pos[0]
         self.pos_y_percent = pos[1]
-        self.screen_width = self.parser.parse_attr('width')
-        self.screen_height = self.parser.parse_attr('height')
+        self.screen_width = self.screen_settings.WIDTH
+        self.screen_height = self.screen_settings.HEIGHT
         self.width = (self.width_precent * self.screen_width) / 100
         self.height = (self.height_precent * self.screen_height) / 100
         self.pos_x = (self.pos_x_percent * self.screen_width) / 100
@@ -52,9 +54,17 @@ class Static_Button():
         self.screen.blit(self.text_surf, self.text_rect)
         self.click()
 
+    def settings(self):
+        self.screen_settings = SCREEN_SETTINGS()
+        self.player_settings = PLAYER_SETTINGS()
+        self.control_settings = CONTROL_SETTINGS()
+        self.viewport_settings = VIEWPORT_SETTINGS()
+        self.render_settings = RENDER_SETTINGS()
+        self.parser = Parser()
+
     def update(self):
-        self.screen_width = self.parser.parse_attr('width')
-        self.screen_height = self.parser.parse_attr('height')
+        self.screen_width = self.screen_settings.WIDTH
+        self.screen_height = self.screen_settings.HEIGHT
         self.width = (self.width_precent * self.screen_width) / 100
         self.height = (self.height_precent * self.screen_height) / 100
         self.pos_x = (self.pos_x_percent * self.screen_width) / 100
@@ -188,7 +198,6 @@ class Resolution(Static_Button):
             self.game.menu.saved_settings['id'] = self.id
             self.flashed = False
             self.flash_res_screen()
-            # print("res", self.parser.data)
             self.active = False
 
     def flash_res_screen(self):
@@ -204,79 +213,54 @@ class Resolution(Static_Button):
 class Save_Settings(Static_Button):
     def __init__(self, game, text='Save Settings', width=200, height=40, pos=(0, 0), btn_color_1='#475F77', btn_color_2='#354B5E', btn_color_3='#D74B4B', font='Arial', font_size=1, font_color='#FFFFFF', dynamic_elevation=6, static_elevation=0, border_radius=12):
         super().__init__(game, text, width, height, pos, btn_color_1, btn_color_2, btn_color_3, font, font_size, font_color, dynamic_elevation, static_elevation, border_radius)
-        self.control_settings = self.game.control_settings
-        self.player_settings = self.game.player_settings
-        self.screen_settings = self.game.screen_settings
-        self.viewport_settings = self.game.viewport_settings
-        self.render_settings = self.game.render_settings
-        self.map_settings = self.game.map_settings
-        self.texture_settings = self.game.texture_settings
 
     def function(self):
         if self.active:
-            # print(self.parser.data, self.game.parser.data, self.screen_settings.parser.data, self.game.menu.saved_settings)
             with open(join('Code', 'saved_settings.txt'), 'w') as settings:
                 json.dump(self.game.menu.saved_settings, settings)
-            # print("btn", self.parser.data)
-            # self.parser.update()
-            # print(self.parser.data)
-            self.game.SCREEN = pg.display.set_mode((self.parser.parse_attr('width'), self.parser.parse_attr('height')))
-            self.game.menu.pause_screen = pg.Surface((self.parser.parse_attr('width'), self.parser.parse_attr('height')), pg.SRCALPHA)
-            self.game.menu.pause_screen.fill((0, 0, 0, 128))
-            self.game.menu.menu_screen = pg.Surface((self.parser.parse_attr('width'), self.parser.parse_attr('height')))
-            self.game.menu.menu_screen.fill((45, 53, 62, 255))
-            self.game.menu.screen_width, self.game.menu.screen_height = self.parser.parse_attr('width'), self.parser.parse_attr('height')                                   
-            for buttons in self.game.menu.all_buttons:
-                buttons.update()
+            self.parser.update("SAVE")                                  
             self.screen_settings.update()
             self.player_settings.update()
             self.control_settings.update()
             self.viewport_settings.update()
             self.render_settings.update()
-            self.map_settings.update()
-            self.texture_settings.update()
-            self.game.menu.credits_text = self.parser.parse_credits(join('Code', 'credits.txt'))
+            self.game.update_settings()
+            for buttons in self.game.menu.all_buttons:
+                buttons.update()
             self.game.menu.settings_saved = True
             self.game.menu.settings_changed = True
-
-            # print(self.parser.data, self.game.parser.data, self.screen_settings.parser.data, self.game.menu.saved_settings)
             self.active = False
 
 
 class Reset_Settings(Static_Button):
     def __init__(self, game, text='Reset Settings', width=200, height=40, pos=(0, 0), btn_color_1='#475F77', btn_color_2='#354B5E', btn_color_3='#D74B4B', font='Arial', font_size=1, font_color='#FFFFFF', dynamic_elevation=6, static_elevation=0, border_radius=12):
         super().__init__(game, text, width, height, pos, btn_color_1, btn_color_2, btn_color_3, font, font_size, font_color, dynamic_elevation, static_elevation, border_radius)
-        self.control_settings = self.game.control_settings
-        self.player_settings = self.game.player_settings
 
     def function(self):
         if self.active:
             with open(join('Code', 'saved_settings.txt'), 'w') as settings:
                 pass
-            self.game.menu.settings_changed = True
-            self.game.menu.res1.btn_color_1 = self.game.menu.res1.btn_color_3 = self.parser.default_data['res1']
-            self.game.menu.res2.btn_color_1 = self.game.menu.res2.btn_color_3 = self.parser.default_data['res2']
-            self.game.menu.res3.btn_color_1 = self.game.menu.res3.btn_color_3 = self.parser.default_data['res3']
-            self.game.menu.player_speed.text = f'{format(((self.parser.default_data['player_speed'] / 0.006) * 100), ".2f")}%'
-            self.game.menu.player_rot_speed.text = f'{format(((self.parser.default_data['player_rot_speed'] / 0.006) * 100), ".2f")}%'
-            self.game.menu.mouse_sensitivity.text = f'{format(((self.parser.default_data['mouse_sensitivity'] / 0.0006) * 100), ".2f")}%'
-            self.game.SCREEN = pg.display.set_mode((self.parser.default_data['width'], self.parser.default_data['height']))
-            self.game.menu.pause_screen = pg.Surface((self.parser.default_data['width'], self.parser.default_data['height']), pg.SRCALPHA)
-            self.game.menu.pause_screen.fill((0, 0, 0, 128))
-            self.game.menu.menu_screen = pg.Surface((self.parser.default_data['width'], self.parser.default_data['height']))
-            self.game.menu.menu_screen.fill((45, 53, 62, 255))
-            self.game.menu.screen_width, self.game.menu.screen_height = self.parser.default_data['width'], self.parser.default_data['height']
-            self.player_settings.PLAYER_SPEED = self.parser.default_data['player_speed']
-            self.player_settings.PLAYER_ROT_SPEED = self.parser.default_data['player_rot_speed']
-            self.control_settings.MOUSE_SENSITIVITY = self.parser.default_data['mouse_sensitivity']
-            self.control_settings.WIDTH = self.parser.default_data['width']
-            self.control_settings.HEIGHT = self.parser.default_data['height']
-            self.game.menu.saved_settings = self.parser.parse_default_settings()
+            self.revert_btn_data()                             
+            self.parser.update("RESET")
+            self.screen_settings.update()
+            self.player_settings.update()
+            self.control_settings.update()
+            self.viewport_settings.update()
+            self.render_settings.update()
+            self.game.update_settings()
             for buttons in self.game.menu.all_buttons:
                 buttons.update()
-            self.game.menu.credits_text = self.parser.parse_credits(join('Code', 'credits.txt'))
             self.game.menu.settings_reset = True
+            self.game.menu.settings_changed = True
             self.active = False
+
+    def revert_btn_data(self):
+        self.game.menu.res1.btn_color_1 = self.game.menu.res1.btn_color_3 = self.parser.default_data['res1']
+        self.game.menu.res2.btn_color_1 = self.game.menu.res2.btn_color_3 = self.parser.default_data['res2']
+        self.game.menu.res3.btn_color_1 = self.game.menu.res3.btn_color_3 = self.parser.default_data['res3']
+        self.game.menu.player_speed.text = f'{format(((self.parser.default_data['player_speed'] / 0.006) * 100), ".2f")}%'
+        self.game.menu.player_rot_speed.text = f'{format(((self.parser.default_data['player_rot_speed'] / 0.006) * 100), ".2f")}%'
+        self.game.menu.mouse_sensitivity.text = f'{format(((self.parser.default_data['mouse_sensitivity'] / 0.0006) * 100), ".2f")}%'
 
 
 class Up(Static_Button):

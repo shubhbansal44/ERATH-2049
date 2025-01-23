@@ -1,6 +1,8 @@
+# IMPORTS
 import pygame as pg
 from os.path import join
-# from settings import *
+from parser import Parser
+from settings import SCREEN_SETTINGS
 from buttons import *
 
 
@@ -9,7 +11,7 @@ class Menu():
         self.game = game
         self.settings()
         self.screen = game.SCREEN
-        self.screen_width, self.screen_height = self.parser.parse_attr('width'), self.parser.parse_attr('height')
+        self.screen_width, self.screen_height = self.screen_settings.WIDTH, self.screen_settings.HEIGHT
         self.get_flags()
         self.get_screens()
         self.flags = {
@@ -19,7 +21,6 @@ class Menu():
             'save_game': bool,
             'credits': bool
         }
-        self.saved_settings = self.parser.data
         self.buttons()
 
     def get_screens(self):
@@ -28,7 +29,7 @@ class Menu():
         self.menu_screen = pg.Surface(self.screen_settings.RES)
         self.menu_screen.fill((45, 53, 62, 255))
         self.credits_text = self.parser.parse_credits(join('Code', 'credits.txt'))
-        self.credits_y_offset = self.screen_settings.HEIGHT
+        self.credits_y_offset = self.screen_height
 
     def get_flags(self):
         self.pause = False
@@ -44,8 +45,18 @@ class Menu():
         self.settings_changed = True
 
     def settings(self):
-        self.screen_settings = self.game.screen_settings
-        self.parser = self.game.parser
+        self.screen_settings = SCREEN_SETTINGS()
+        self.parser = Parser()
+        self.saved_settings = self.parser.data
+
+    def update_settings(self):
+        self.screen_width, self.screen_height = self.screen_settings.WIDTH, self.screen_settings.HEIGHT
+        self.pause_screen = pg.Surface(self.screen_settings.RES, pg.SRCALPHA)
+        self.pause_screen.fill((0, 0, 0, 128))
+        self.menu_screen = pg.Surface(self.screen_settings.RES)
+        self.menu_screen.fill((45, 53, 62, 255))
+        self.credits_text = self.parser.parse_credits(join('Code', 'credits.txt'))
+        self.credits_y_offset = self.screen_height
 
     def buttons(self):
         self.all_buttons = []
@@ -152,13 +163,13 @@ class Menu():
         self.screen.blit(self.menu_screen, (0, 0))
         self.back_btn.draw()
         credits_y = self.credits_y_offset
-        x = (13.02 * self.saved_settings['width']) / 100
+        x = (13.02 * self.screen_width) / 100
         for line in self.credits_text:
             self.screen.blit(line, (x, credits_y))
             credits_y += 40
         self.credits_y_offset -= 0.3
         if self.credits_y_offset < -len(self.credits_text) * 40:
-            self.credits_y_offset = self.screen_settings.HEIGHT
+            self.credits_y_offset = self.screen_height
         pg.display.update()
 
     def draw_load_game(self):
@@ -202,7 +213,7 @@ class Menu():
     def settings_continuity(self):
         if self.menu and not self.options:
             if not self.settings_changed:
-                self.saved_settings = self.parser.parse_settings()
+                self.saved_settings = self.parser.data
                 self.res1.btn_color_1 = self.res1.btn_color_3 = self.saved_settings['res1']
                 self.res2.btn_color_1 = self.res2.btn_color_3 = self.saved_settings['res2']
                 self.res3.btn_color_1 = self.res3.btn_color_3 = self.saved_settings['res3']
@@ -227,8 +238,6 @@ class Menu():
             self.draw_save_game()
 
     def update(self):
-        # print(f'main menu: {self.main_menu}\nmenu: {self.menu}\nsettings: {self.options}\ncredits: {self.credits}\nload game: {self.load_game}\nsave game: {self.save_game}')
-        # print(self.saved_settings, f'save: {self.settings_saved}, reset: {self.settings_reset}, change: {self.settings_changed}')
         if self.menu:
             self.new_game_btn.function()
             self.settings_btn.function()

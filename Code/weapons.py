@@ -1,13 +1,16 @@
 from objects import *
 from os.path import join
+from settings import SCREEN_SETTINGS
 
 
 class Weapons(Animated_Objects):
     def __init__(self, game, path=join('Sources', 'weapons', 'revolver', '1.png'), scale=4, animation_time=120):
         super().__init__(game=game, path=path, scale=scale, animation_time=animation_time)
+        self.game = game
+        self.settings()
         self.scale = scale
         self.frames = self.get_frames(self.path)
-        self.weapon_pos = (self.render_settings.H_WIDTH - self.frames[0].get_width() // 2, self.render_settings.HEIGHT - self.frames[0].get_height())
+        self.weapon_pos = (self.screen_settings.H_WIDTH - self.frames[0].get_width() // 2, self.screen_settings.HEIGHT - self.frames[0].get_height())
         self.reloading = False
         self.frames_count = len(self.frames)
         self.reloading_progress = 0
@@ -19,16 +22,29 @@ class Weapons(Animated_Objects):
         self.weapon = self.weapons[self.id]
         self.pointer = self.game.renderer.get_texture(join('Sources', 'weapons', 'pointer.png'), (50, 50))
         self.target_pos = [
-            (self.render_settings.H_WIDTH - (self.frames[0].get_width() // 2 - 202), self.render_settings.HEIGHT - (self.frames[0].get_height() + 100)),
-            (self.render_settings.H_WIDTH - (self.frames[0].get_width() // 2 - 133), self.render_settings.HEIGHT - (self.frames[0].get_height() + 10)),
-            (self.render_settings.H_WIDTH - (self.frames[0].get_width() // 2 - 134), self.render_settings.HEIGHT - (self.frames[0].get_height() + 15)),
-            (self.render_settings.H_WIDTH - (self.frames[0].get_width() // 2 - 135), self.render_settings.HEIGHT - (self.frames[0].get_height() + 120))
+            (self.screen_settings.H_WIDTH - (self.frames[0].get_width() // 2 - 202), self.screen_settings.HEIGHT - (self.frames[0].get_height() + 100)),
+            (self.screen_settings.H_WIDTH - (self.frames[0].get_width() // 2 - 133), self.screen_settings.HEIGHT - (self.frames[0].get_height() + 10)),
+            (self.screen_settings.H_WIDTH - (self.frames[0].get_width() // 2 - 134), self.screen_settings.HEIGHT - (self.frames[0].get_height() + 15)),
+            (self.screen_settings.H_WIDTH - (self.frames[0].get_width() // 2 - 135), self.screen_settings.HEIGHT - (self.frames[0].get_height() + 120))
         ]
         self.pointer_pos = self.target_pos[self.id]
-        # self.restriction = len(self.weapons) - 2
+        # self.restriction = len(self.weapons) - 2 TODO
         self.restriction = 0
         self.b_pressed = False
         self.rshift_pressed = False
+
+    def settings(self):
+        self.screen_settings = SCREEN_SETTINGS()
+
+    def update_settings(self):
+        self.weapon_pos = (self.screen_settings.H_WIDTH - self.frames[0].get_width() // 2, self.screen_settings.HEIGHT - self.frames[0].get_height())
+        self.target_pos = [
+            (self.screen_settings.H_WIDTH - (self.frames[0].get_width() // 2 - 202), self.screen_settings.HEIGHT - (self.frames[0].get_height() + 100)),
+            (self.screen_settings.H_WIDTH - (self.frames[0].get_width() // 2 - 133), self.screen_settings.HEIGHT - (self.frames[0].get_height() + 10)),
+            (self.screen_settings.H_WIDTH - (self.frames[0].get_width() // 2 - 134), self.screen_settings.HEIGHT - (self.frames[0].get_height() + 15)),
+            (self.screen_settings.H_WIDTH - (self.frames[0].get_width() // 2 - 135), self.screen_settings.HEIGHT - (self.frames[0].get_height() + 120))
+        ]
+        self.pointer_pos = self.target_pos[self.id]
 
     def weapon_change(self):
         key = pg.key.get_pressed()
@@ -37,11 +53,11 @@ class Weapons(Animated_Objects):
             self.weapon = self.weapons[self.id]
             self.damage = self.damages[self.id]
             self.path = join('Sources', 'weapons', self.weapon, '1.png')
-            self.scale = 4 if self.id !=1 else 0.3
+            self.scale = 4 if self.id != 1 else 0.3
             self.image = pg.image.load(self.path).convert_alpha()
             self.frames = self.get_frames(self.path.rsplit('\\', 1)[0])
             self.frames_count = len(self.frames)
-            self.weapon_pos = (self.render_settings.H_WIDTH - self.frames[0].get_width() // 2, self.render_settings.HEIGHT - self.frames[0].get_height())
+            self.weapon_pos = (self.screen_settings.H_WIDTH - self.frames[0].get_width() // 2, self.screen_settings.HEIGHT - self.frames[0].get_height())
             self.pointer_pos = self.target_pos[self.id]
             self.b_pressed = True
         if not key[pg.K_b]:
