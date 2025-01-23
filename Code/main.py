@@ -63,8 +63,9 @@ class Game():
     def update_settings(self):
         self.SCREEN = pg.display.set_mode(self.screen_settings.RES, pg.RESIZABLE)
         self.menu.update_settings()
-        self.renderer.update_settings()
-        self.weapon.update_settings()
+        if self.game:
+            self.renderer.update_settings()
+            self.weapon.update_settings()
 
     def draw(self):
         if self.game:
