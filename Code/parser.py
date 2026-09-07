@@ -1,7 +1,7 @@
 import pygame as pg
-from os.path import join
 import os
 import json
+from paths import DEFAULT_SETTINGS_FILE, SAVED_SETTINGS_FILE, CREDITS_FILE
 
 
 class Parser:
@@ -9,8 +9,8 @@ class Parser:
     default_data = None
 
     def __init__(self):
-        self.default_settings_path = join('Code', 'default_settings.txt')
-        self.saved_settings_path = join('Code', 'saved_settings.txt')
+        self.default_settings_path = str(DEFAULT_SETTINGS_FILE)
+        self.saved_settings_path = str(SAVED_SETTINGS_FILE)
         self.unparse_default_settings()
         Parser.data = self.parse_settings()
         Parser.default_data = self.parse_default_settings()

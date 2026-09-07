@@ -2,7 +2,7 @@
 import pygame as pg
 from settings import PLAYER_SETTINGS, MAP_SETTINGS, CONTROL_SETTINGS, TEXTURE_SETTINGS, SCREEN_SETTINGS
 import math
-from os.path import join
+from paths import DIGITS_DIR
 
 
 class Player():
@@ -17,7 +17,7 @@ class Player():
         self.rel = 0
         self.supplements = (self.player_settings.MAX_HEALTH / 100) * .01 # .01%
         self.view = False
-        self.digits_images = [self.game.renderer.get_texture(join('Sources', 'digits', f'{i}.png'), [self.texture_settings.DIGIT_SIZE] * 2) for i in range(11)]
+        self.digits_images = [self.game.renderer.get_texture(str(DIGITS_DIR / f'{i}.png'), [self.texture_settings.DIGIT_SIZE] * 2) for i in range(11)]
         self.digits = dict(zip(map(str, range(11)), self.digits_images))
         self.h_pressed = False
 

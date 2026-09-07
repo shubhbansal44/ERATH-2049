@@ -1,9 +1,9 @@
 # IMPORTS
 import pygame as pg
-from os.path import join
 from parser import Parser
 from settings import SCREEN_SETTINGS
 from buttons import *
+from paths import CREDITS_FILE
 
 
 class Menu():
@@ -28,7 +28,7 @@ class Menu():
         self.pause_screen.fill((0, 0, 0, 128))
         self.menu_screen = pg.Surface(self.screen_settings.RES)
         self.menu_screen.fill((45, 53, 62, 255))
-        self.credits_text = self.parser.parse_credits(join('Code', 'credits.txt'))
+        self.credits_text = self.parser.parse_credits(str(CREDITS_FILE))
         self.credits_y_offset = self.screen_height
 
     def get_flags(self):
@@ -55,7 +55,7 @@ class Menu():
         self.pause_screen.fill((0, 0, 0, 128))
         self.menu_screen = pg.Surface(self.screen_settings.RES)
         self.menu_screen.fill((45, 53, 62, 255))
-        self.credits_text = self.parser.parse_credits(join('Code', 'credits.txt'))
+        self.credits_text = self.parser.parse_credits(str(CREDITS_FILE))
         self.credits_y_offset = self.screen_height
 
     def buttons(self):

@@ -1,19 +1,20 @@
 # IMPORTS
 from objects import *
-from os.path import join
+from pathlib import Path
 from random import randint, random
 from settings import MAP_SETTINGS, VIEWPORT_SETTINGS, SCREEN_SETTINGS, RENDER_SETTINGS
+from paths import ENEMIES_DIR
 
 
 class Enemy(Animated_Objects):
-    def __init__(self, game, path=join('sources', 'enemies', 'soldier', '0.png'), pos=(1.5, 1.5), scale=0.7, shift=0.4, animation_time=250, health=150, id='soldier'):
+    def __init__(self, game, path=ENEMIES_DIR / 'soldier' / '0.png', pos=(1.5, 1.5), scale=0.7, shift=0.4, animation_time=250, health=150, id='soldier'):
         super().__init__(game, path, pos, scale, shift, animation_time)
         self.settings()
-        self.attack_frames = self.get_frames(join(self.path, 'attack'))
-        self.death_frames = self.get_frames(join(self.path, 'death'))
-        self.idle_frames = self.get_frames(join(self.path, 'idle'))
-        self.pain_frames = self.get_frames(join(self.path, 'pain'))
-        self.walk_frames = self.get_frames(join(self.path, 'walk'))
+        self.attack_frames = self.get_frames(self.path / 'attack')
+        self.death_frames = self.get_frames(self.path / 'death')
+        self.idle_frames = self.get_frames(self.path / 'idle')
+        self.pain_frames = self.get_frames(self.path / 'pain')
+        self.walk_frames = self.get_frames(self.path / 'walk')
         self.attack_dist = randint(2,4)
         self.speed = .04
         self.size = 30
@@ -231,12 +232,12 @@ class Enemy(Animated_Objects):
 
 
 class Soldier(Enemy):
-    def __init__(self, game, path=join('sources', 'enemies', 'soldier', '0.png'), pos=(1.5, 1.5), scale=0.6, shift=0.4, animation_time=250, health=150, id='soldier'):
+    def __init__(self, game, path=ENEMIES_DIR / 'soldier' / '0.png', pos=(1.5, 1.5), scale=0.6, shift=0.4, animation_time=250, health=150, id='soldier'):
         super().__init__(game, path, pos, scale, shift, animation_time, health, id)
 
 
 class Octobrain(Enemy):
-    def __init__(self, game, path=join('sources', 'enemies', 'octobrain', '0.png'), pos=(9.5, 18.5), scale=0.7, shift=0.1, animation_time=220, health=100, id='octobrain'):
+    def __init__(self, game, path=ENEMIES_DIR / 'octobrain' / '0.png', pos=(9.5, 18.5), scale=0.7, shift=0.1, animation_time=220, health=100, id='octobrain'):
         super().__init__(game, path, pos, scale, shift, animation_time, health, id)
         self.attack_dist = 1
         self.speed = .05
@@ -246,7 +247,7 @@ class Octobrain(Enemy):
 
 
 class Chaos_Serpent(Enemy):
-    def __init__(self, game, path=join('sources', 'enemies', 'chaos_serpent', '0.png'), pos=(7.5, 31.5), scale=0.7, shift=0.4, animation_time=250, health=150, id='chaos_serpent'):
+    def __init__(self, game, path=ENEMIES_DIR / 'chaos_serpent' / '0.png', pos=(7.5, 31.5), scale=0.7, shift=0.4, animation_time=250, health=150, id='chaos_serpent'):
         super().__init__(game, path, pos, scale, shift, animation_time, health, id)
         self.attack_dist = 2
         self.speed = .03
@@ -255,7 +256,7 @@ class Chaos_Serpent(Enemy):
 
 
 class Cyber_Demon(Enemy):
-    def __init__(self, game, path=join('sources', 'enemies', 'cyber_demon', '0.png'), pos=(7.5, 31.5), scale=1.1, shift=0.3, animation_time=250, health=250, id='cyber_demon'):
+    def __init__(self, game, path=ENEMIES_DIR / 'cyber_demon' / '0.png', pos=(7.5, 31.5), scale=1.1, shift=0.3, animation_time=250, health=250, id='cyber_demon'):
         super().__init__(game, path, pos, scale, shift, animation_time, health, id)
         self.attack_dist = 2
         self.speed = .03
@@ -264,7 +265,7 @@ class Cyber_Demon(Enemy):
 
 
 class Cerberus(Enemy):
-    def __init__(self, game, path=join('sources', 'enemies', 'cerberus', '0.png'), pos=(7.5, 31.5), scale=0.6, shift=0.4, animation_time=220, health=170, id='cerberus'):
+    def __init__(self, game, path=ENEMIES_DIR / 'cerberus' / '0.png', pos=(7.5, 31.5), scale=0.6, shift=0.4, animation_time=220, health=170, id='cerberus'):
         super().__init__(game, path, pos, scale, shift, animation_time, health, id)
         self.attack_dist = 1
         self.speed = .04

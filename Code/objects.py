@@ -3,17 +3,19 @@ import pygame as pg
 import os
 from collections import deque
 import math
+from pathlib import Path
 from settings import RENDER_SETTINGS, SCREEN_SETTINGS, VIEWPORT_SETTINGS
+from paths import OBJECTS_DIR
 
 
 class Static_Objects():
-    def __init__(self, game, path=os.path.join('Sources', 'objects', 'stand', 'LampStand.png'), pos=(1.1, 1.1), scale=0.7, shift=0.50):
+    def __init__(self, game, path=OBJECTS_DIR / 'stand' / 'LampStand.png', pos=(1.1, 1.1), scale=0.7, shift=0.50):
         self.game = game
         self.settings()
         self.player = game.player
         self.x, self.y = pos
-        self.id = path.rsplit('\\')[1]
-        self.image = pg.image.load(path).convert_alpha()
+        self.id = Path(path).parent.name
+        self.image = pg.image.load(str(path)).convert_alpha()
         self.image_width = self.image.get_width()
         self.image_h_width = self.image.get_width() // 2
         self.image_ratio = self.image_width / self.image.get_height()
@@ -64,10 +66,10 @@ class Static_Objects():
 
 
 class Animated_Objects(Static_Objects):
-    def __init__(self, game, path=os.path.join('Sources', 'objects', 'fire1', 'tile000.png'), pos=(1.05, 1.05), scale=0.3, shift=0.1, animation_time=40):
+    def __init__(self, game, path=OBJECTS_DIR / 'fire1' / 'tile000.png', pos=(1.05, 1.05), scale=0.3, shift=0.1, animation_time=40):
         super().__init__(game, path, pos, scale, shift)
         self.animation_time = animation_time
-        self.path = path.rsplit('\\', 1)[0]
+        self.path = Path(path).parent
         self.frames = self.get_frames(self.path)
         self.time_prev = pg.time.get_ticks()
         self.animation_flag = False
@@ -91,8 +93,9 @@ class Animated_Objects(Static_Objects):
 
     def get_frames(self, path):
         frames = deque()
-        for file in os.listdir(path):
-            if os.path.isfile(os.path.join(path, file)):
-                frame = pg.image.load(os.path.join(path, file)).convert_alpha()
+        path = Path(path)
+        for file in sorted(path.iterdir()):
+            if file.is_file():
+                frame = pg.image.load(str(file)).convert_alpha()
                 frames.append(frame)
         return frames

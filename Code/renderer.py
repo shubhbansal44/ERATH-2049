@@ -1,8 +1,8 @@
 # IMPORTS
 import pygame as pg
-from os.path import join
 import math
 from settings import SCREEN_SETTINGS, TEXTURE_SETTINGS
+from paths import SKY_DIR, WALLS_DIR, EFFECTS_DIR
 
 
 class Renderer():
@@ -10,16 +10,14 @@ class Renderer():
         self.game = game
         self.settings()
         self.screen = game.SCREEN
-        # self.base_path = os.path.dirname(os.path.abspath(__file__)).rsplit('\\', 1)[0] TODO
         self.wall_textures = self.load_wall_textures()
-        self.sky_images = [self.get_texture(join('Sources', 'sky', f'{i}.png'), (self.screen_settings.WIDTH, self.screen_settings.H_HEIGHT)) for i in range(1,6)]
+        self.sky_images = [self.get_texture(str(SKY_DIR / f'{i}.png'), (self.screen_settings.WIDTH, self.screen_settings.H_HEIGHT)) for i in range(1,6)]
         self.sky = 0
         self.pass_time = False
         self.duration = 360000
         self.time_prev = pg.time.get_ticks()
-        # self.floor = self.get_texture(join('Sources', 'floors', '1.png'), (WIDTH, H_HEIGHT)) TODO
-        self.blood_screen = self.get_texture(join('Sources', 'effects', 'blood', 'blood.png'), self.screen_settings.RES)
-        self.death_screen = self.get_texture(join('Sources', 'effects', 'death', 'death.jpg'), self.screen_settings.RES)
+        self.blood_screen = self.get_texture(str(EFFECTS_DIR / 'blood' / 'blood.png'), self.screen_settings.RES)
+        self.death_screen = self.get_texture(str(EFFECTS_DIR / 'death' / 'death.jpg'), self.screen_settings.RES)
         self.death_blit = False
         self.win_blit = False
 
@@ -28,9 +26,9 @@ class Renderer():
         self.texture_settings = TEXTURE_SETTINGS()
 
     def update_settings(self):
-        self.sky_images = [self.get_texture(join('Sources', 'sky', f'{i}.png'), (self.screen_settings.WIDTH, self.screen_settings.H_HEIGHT)) for i in range(1,6)]
-        self.blood_screen = self.get_texture(join('Sources', 'effects', 'blood', 'blood.png'), self.screen_settings.RES)
-        self.death_screen = self.get_texture(join('Sources', 'effects', 'death', 'death.jpg'), self.screen_settings.RES)
+        self.sky_images = [self.get_texture(str(SKY_DIR / f'{i}.png'), (self.screen_settings.WIDTH, self.screen_settings.H_HEIGHT)) for i in range(1,6)]
+        self.blood_screen = self.get_texture(str(EFFECTS_DIR / 'blood' / 'blood.png'), self.screen_settings.RES)
+        self.death_screen = self.get_texture(str(EFFECTS_DIR / 'death' / 'death.jpg'), self.screen_settings.RES)
 
     def blood(self):
         self.screen.blit(self.blood_screen, (0, 0))
@@ -92,9 +90,9 @@ class Renderer():
     
     def load_wall_textures(self):
         return {
-            1: self.get_texture(join('Sources', 'walls', '1.png')),
-            2: self.get_texture(join('Sources', 'walls', '2.png')),
-            3: self.get_texture(join('Sources', 'walls', '3.png')),
-            4: self.get_texture(join('Sources', 'walls', '4.png')),
-            5: self.get_texture(join('Sources', 'walls', '5.png')),
+            1: self.get_texture(str(WALLS_DIR / '1.png')),
+            2: self.get_texture(str(WALLS_DIR / '2.png')),
+            3: self.get_texture(str(WALLS_DIR / '3.png')),
+            4: self.get_texture(str(WALLS_DIR / '4.png')),
+            5: self.get_texture(str(WALLS_DIR / '5.png')),
         }

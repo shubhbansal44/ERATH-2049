@@ -1,9 +1,9 @@
 # IMPORTS
-from os.path import join
 from objects import *
 from enemies import *
 from settings import PLAYER_SETTINGS
 from random import choices, randrange
+from paths import ENEMIES_DIR, OBJECTS_DIR
 
 
 class Object_Handler():
@@ -12,9 +12,9 @@ class Object_Handler():
         self.settings()
         self.objects = []
         self.enemies = []
-        self.animated_enemies_path = join('Sources', 'enemies')
-        self.static_objects_path = join('Sources', 'objects')
-        self.animated_objects_path = join('Sources', 'objects')
+        self.animated_enemies_path = ENEMIES_DIR
+        self.static_objects_path = OBJECTS_DIR
+        self.animated_objects_path = OBJECTS_DIR
         self.enemy_pos = {}
         self.enemies_count = 30
         self.enemy_types = [Soldier, Chaos_Serpent, Octobrain, Cerberus, Cyber_Demon]
@@ -46,8 +46,6 @@ class Object_Handler():
     def update(self):
         self.enemy_pos = {enemy.map_pos for enemy in self.enemies if enemy.alive}
         self.enemy_data = {x: {'enemy': self.enemy_id[enemy], 'pos': enemy.pos, 'health': enemy.health} for x, enemy in enumerate(self.enemies) if enemy.alive}
-        # with open(join('Code', 'saved_game.txt'), 'w') as file:
-        #     json.dump(self.enemy_data, file) TODO
         [object.update() for object in self.objects]
         [enemy.update() for enemy in self.enemies]
 

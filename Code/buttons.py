@@ -2,9 +2,9 @@
 import json
 import pygame as pg
 import sys
-from os.path import join
 from parser import Parser
 from settings import PLAYER_SETTINGS, SCREEN_SETTINGS, RENDER_SETTINGS, VIEWPORT_SETTINGS, CONTROL_SETTINGS
+from paths import SAVED_SETTINGS_FILE
 
 
 class Static_Button():
@@ -216,7 +216,7 @@ class Save_Settings(Static_Button):
 
     def function(self):
         if self.active:
-            with open(join('Code', 'saved_settings.txt'), 'w') as settings:
+            with open(str(SAVED_SETTINGS_FILE), 'w') as settings:
                 json.dump(self.game.menu.saved_settings, settings)
             self.parser.update("SAVE")                                  
             self.screen_settings.update()
@@ -238,7 +238,7 @@ class Reset_Settings(Static_Button):
 
     def function(self):
         if self.active:
-            with open(join('Code', 'saved_settings.txt'), 'w') as settings:
+            with open(str(SAVED_SETTINGS_FILE), 'w') as settings:
                 pass
             self.revert_btn_data()                             
             self.parser.update("RESET")

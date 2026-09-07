@@ -1,10 +1,11 @@
 from objects import *
-from os.path import join
+from pathlib import Path
 from settings import SCREEN_SETTINGS
+from paths import WEAPONS_DIR
 
 
 class Weapons(Animated_Objects):
-    def __init__(self, game, path=join('Sources', 'weapons', 'revolver', '1.png'), scale=4, animation_time=120):
+    def __init__(self, game, path=WEAPONS_DIR / 'revolver' / '1.png', scale=4, animation_time=120):
         super().__init__(game=game, path=path, scale=scale, animation_time=animation_time)
         self.game = game
         self.settings()
@@ -20,7 +21,7 @@ class Weapons(Animated_Objects):
         self.target = True
         self.weapons = ['revolver', 'shotgun_1_barrel', 'shotgun_2_barrel', 'thrower']
         self.weapon = self.weapons[self.id]
-        self.pointer = self.game.renderer.get_texture(join('Sources', 'weapons', 'pointer.png'), (50, 50))
+        self.pointer = self.game.renderer.get_texture(str(WEAPONS_DIR / 'pointer.png'), (50, 50))
         self.target_pos = [
             (self.screen_settings.H_WIDTH - (self.frames[0].get_width() // 2 - 202), self.screen_settings.HEIGHT - (self.frames[0].get_height() + 100)),
             (self.screen_settings.H_WIDTH - (self.frames[0].get_width() // 2 - 133), self.screen_settings.HEIGHT - (self.frames[0].get_height() + 10)),
@@ -52,10 +53,10 @@ class Weapons(Animated_Objects):
             self.id = (self.id + 1) % (len(self.weapons) - self.restriction)
             self.weapon = self.weapons[self.id]
             self.damage = self.damages[self.id]
-            self.path = join('Sources', 'weapons', self.weapon, '1.png')
+            self.path = WEAPONS_DIR / self.weapon / '1.png'
             self.scale = 4 if self.id != 1 else 0.3
-            self.image = pg.image.load(self.path).convert_alpha()
-            self.frames = self.get_frames(self.path.rsplit('\\', 1)[0])
+            self.image = pg.image.load(str(self.path)).convert_alpha()
+            self.frames = self.get_frames(self.path.parent)
             self.frames_count = len(self.frames)
             self.weapon_pos = (self.screen_settings.H_WIDTH - self.frames[0].get_width() // 2, self.screen_settings.HEIGHT - self.frames[0].get_height())
             self.pointer_pos = self.target_pos[self.id]
@@ -65,9 +66,10 @@ class Weapons(Animated_Objects):
 
     def get_frames(self, path):
         frames = deque()
-        for file in os.listdir(path):
-            if os.path.isfile(os.path.join(path, file)):
-                frame = pg.image.load(os.path.join(path, file)).convert_alpha()
+        path = Path(path)
+        for file in sorted(path.iterdir()):
+            if file.is_file():
+                frame = pg.image.load(str(file)).convert_alpha()
                 frame = pg.transform.smoothscale(frame, (self.image.get_width() * self.scale, self.image.get_height() * self.scale))
                 frames.append(frame)
         return frames
